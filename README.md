@@ -38,6 +38,7 @@ API for a pizza-delivery company. Specs:
 ---
 ##### API Document
 Avaialble here :
+
 https://docs.google.com/document/d/1qzlhaQNNIwDiIS9BlEHuml8PwDI_PUofehBl5g1NZBo/edit?usp=sharing
 ---
 ##### menu.json
@@ -59,4 +60,14 @@ menu.json was generated using www.json-generator.com with the following template
   }
 ]
 ```
+
+copy paste the generated array containing JSON element to `menugen.js` and
+execute the following command:
+
+`node menugen.js`
+
+one file per menu item will be generated in the `.data/menu` directory
+
+
+
 ---

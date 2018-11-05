@@ -18,7 +18,7 @@ lib.baseDir = path.join(__dirname,'/../.data');
 lib.create = function(dir, file, data, callback) {
 	// open the file for writing
 	filename = lib.baseDir+'/'+dir+'/'+file+'.json';
-	console.log(filename);
+	
 	fs.open(filename,'wx',function(err,fileDescriptor){
 		if (!err && fileDescriptor) {
 			// convert data to string
