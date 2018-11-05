@@ -39,4 +39,24 @@ API for a pizza-delivery company. Specs:
 ##### API Document
 Avaialble here :
 https://docs.google.com/document/d/1qzlhaQNNIwDiIS9BlEHuml8PwDI_PUofehBl5g1NZBo/edit?usp=sharing
+---
+##### menu.json
 
+menu.json was generated using www.json-generator.com with the following template
+
+```
+[
+  '{{repeat(50, 7)}}',
+  {
+    menuId: '{{objectId()}}',
+    menuIndex: '{{index()}}',
+    availableToday: '{{bool()}}',
+    price: '{{floating(100, 200, 2, "0.00")}}',
+    picture: 'http://placehold.it/32x32',
+    category: '{{random("dessert", "starter", "main course")}}',
+    name: '{{lorem(4,"words")}}',
+    description: '{{lorem(10, "words")}}'
+  }
+]
+```
+---

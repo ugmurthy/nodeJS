@@ -9,6 +9,68 @@ var debug = util.debuglog('handlers');
 // Define all the handlers
 var handlers = {};
 
+// MENU : for now one can only get items from the menu
+handlers.menu = function(data, callback) {
+	var acceptableMethods = ['get'];
+	if (acceptableMethods.indexOf(data.method) > -1){
+		handlers._menu[data.method](data,callback);
+	} else {
+		// 405 is method not acceptable
+		callback(405);
+	}
+};
+
+
+// container for menu sub method
+handlers._menu = {};
+
+// handlers GET
+// required field : menuIndex
+handlers._menu.get = function(data,callback) {
+	// check menuIndex is a number
+	
+	var menuIndex = typeof(data.queryStringObject.menuIndex) == 'string' 
+		&& parseInt(data.queryStringObject.menuIndex) > -1
+			? data.queryStringObject.menuIndex
+			: false ;
+	
+	debug("menuIndex", menuIndex);
+	if (menuIndex) {
+		_data.read('menu',menuIndex, function(err,menuData) {
+			if (!err && menuData) {
+				// we have a menu item
+				callback(200,menuData)
+			} else {
+				// no items
+				callback(404);
+			}
+		});
+	} else {
+		callback(400,{'error':'Missing or invalid required field'});
+	}
+};
+
+// GENERATE MENU files
+handlers._menu.generate = function(menuItems,callback) {
+	
+	var idx=0
+	menuItems.forEach(function(menuItem){
+		
+		menuItem.menuIndex=String(idx);
+		_data.create('menu',menuItem.menuIndex,menuItem, function(err){
+			if (!err) {
+				console.log(helpers.green,"Success writing to "+menuItem.menuIndex+".json");
+				callback(false);
+			} else {
+				console.log(helpers.red,"Error: Writing menuItem no", menuItem.menuIndex);
+				callback(true);
+			}
+		});
+		idx++
+	});
+};
+
+
 // Users
 handlers.users = function(data, callback) {
 	var acceptableMethods = ['post', 'get', 'put','delete'];
