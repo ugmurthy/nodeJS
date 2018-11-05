@@ -47,16 +47,18 @@ menu.json was generated using www.json-generator.com with the following template
 
 ```
 [
-  '{{repeat(50, 7)}}',
+  '{{repeat(30)}}',
   {
     menuId: '{{objectId()}}',
     menuIndex: '{{index()}}',
     availableToday: '{{bool()}}',
     price: '{{floating(100, 200, 2, "0.00")}}',
     picture: 'http://placehold.it/32x32',
-    category: '{{random("dessert", "starter", "main course")}}',
-    name: '{{lorem(4,"words")}}',
-    description: '{{lorem(10, "words")}}'
+    crust:'{{random("thin", "thick")}}',
+    category: '{{random("Vegetarian", "Non-Vegetarian")}}',
+    name: 'Pizza {{lorem(2,"words")}}',
+    size: '{{random("8", "12", "14")}} inch',
+    description: 'Pizza made from {{lorem(10, "words")}}'
   }
 ]
 ```
