@@ -28,25 +28,43 @@ handlers._menu = {};
 // required field : menuIndex
 handlers._menu.get = function(data,callback) {
 	// check menuIndex is a number
-	
 	var menuIndex = typeof(data.queryStringObject.menuIndex) == 'string' 
 		&& parseInt(data.queryStringObject.menuIndex) > -1
 			? data.queryStringObject.menuIndex
 			: false ;
-	
+
+	// who is asking?
+	var phone = typeof(data.queryStringObject.phone) == 'string' &&
+			data.queryStringObject.phone.trim().length == 10 
+			? data.queryStringObject.phone.trim()
+			: false ;
+
 	debug("menuIndex", menuIndex);
-	if (menuIndex) {
-		_data.read('menu',menuIndex, function(err,menuData) {
-			if (!err && menuData) {
-				// we have a menu item
-				callback(200,menuData)
+	debug("phone",phone);
+	
+	if (menuIndex && phone) {
+		// check if there is a valid 'token' (i.e. belongs to a user and not expired)
+		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		// verfify that the give token is valid for the phone number (user)
+		handlers._tokens.verifyToken(token, phone, function(tokenIsValid) {
+			if (tokenIsValid) {
+				// user has valid token - read the menu item and return menuData
+				debug("**tokenIsValue**",tokenIsValid);
+				_data.read('menu',menuIndex, function(err,menuData) {
+					if (!err && menuData) {
+						// we have a menu item
+						callback(200,menuData)
+					} else {
+						// no items
+						callback(404);
+					}
+				});
 			} else {
-				// no items
-				callback(404);
-			}
+				callback(403,{"error":"unauthorised request - rejected"});
+			}	
 		});
 	} else {
-		callback(400,{'error':'Missing or invalid required field'});
+		callback(400,{'error':'Missing or invalid required field/s'});
 	}
 };
 
