@@ -9,6 +9,322 @@ var debug = util.debuglog('handlers');
 // Define all the handlers
 var handlers = {};
 
+
+// CART handler
+handlers.cart = function(data, callback) {
+	var acceptableMethods = ['post','get','put','delete'];
+	if (acceptableMethods.indexOf(data.method) > -1){
+		handlers._cart[data.method](data,callback);
+	} else {
+		// 405 is method not acceptable
+		callback(405);
+	}
+};
+
+
+// container for cart sub method
+handlers._cart = {};
+
+// cart - POST
+handlers._cart.post = function(data, callback) {
+	// check menuIndex is a number
+	var menuIndex = typeof(data.payload.menuIndex) == 'string' 
+		&& parseInt(data.payload.menuIndex) > -1
+			? data.payload.menuIndex
+			: false ;
+
+	// How many?
+	var quantity = typeof(data.payload.quantity) == 'string' 
+		&& parseInt(data.payload.quantity) > 0 
+			? data.payload.quantity.trim()
+			: false ;
+
+	debug("menuIndex", menuIndex);
+	debug("quantity",quantity);
+
+	if (menuIndex && quantity) {
+		// we know what is needed and how many
+		// check who is asking by checking token in headers
+		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		// look up token to get user
+		_data.read('tokens',token,function(err,tokenData){
+
+			if (!err && tokenData) {
+				debug("token found",tokenData);
+				var userPhone = tokenData.phone;
+				// look up user to see if we have a cart
+				_data.read('users',userPhone,function(err,userData){
+					if (!err && userData) {
+						debug("user found",userData.phone);
+						// check if we have a cart if not set it to empty (false)
+						var userCartId =  typeof(userData.userCartId) == 'string' 
+							&& userData.userCartId.trim().length == 20
+								? userData.userCartId.trim()
+								: false;
+						// ASSUMPTION: user can have atmost only one cart at anytime
+						if (!userCartId) {
+							// create cart
+							userCartId = helpers.createRandomString(20);
+							// update user record with userCartId
+							userData.userCartId = userCartId;
+							// store it to file
+							_data.update('users',userPhone,userData,function(err){
+								if (err) {
+									callback(500,{"error":"Could not update users"});
+								}
+							});
+						} 
+
+						// lookup cart
+						_data.read('cart',userCartId,function(err,cartData){
+							if (err) {
+								// populate cart object as have an empty cart
+								var cartData = {};
+								cartData.cartId = userCartId;
+								cartData.phone = userPhone;
+								cartData.lineItems = [] 
+								// create an empty card for user
+								_data.create('cart',cartData.cartId,cartData,function(err){
+									if (err) {
+										callback(500,{"error":"Could not create Cart"});
+									}
+								});
+							} 
+							debug("Cart ",cartData);
+							// lookup menuitem to add
+							_data.read('menu',menuIndex,function(err,menuItem){
+								if (!err && menuItem) {
+									debug("menuIndex",menuItem.menuIndex)
+									// add menu item to lineItems of cart
+
+									var item = {};
+									item.menuIndex = menuItem.menuIndex
+									item.name = menuItem.name;
+									item.price = menuItem.price;
+									item.quantity = quantity
+									// update cart object: update quantity if we already have this item
+									// get menuIndices from lineItems in cartData as an array 
+									var menuIndexInLineItems = [];
+									cartData.lineItems.forEach(function(lineItem) {
+										menuIndexInLineItems.push(lineItem.menuIndex)
+									});
+									// check if item.menIndex is in cart
+									var positionOfNewItem = menuIndexInLineItems.indexOf(item.menuIndex)
+									if (positionOfNewItem != -1 ) {
+										// we have this item in cart - update quantity
+										var tmp = parseInt(cartData.lineItems[positionOfNewItem].quantity) 
+										+ parseInt(item.quantity);
+										cartData.lineItems[positionOfNewItem].quantity = String(tmp);
+										debug("Quantity Updated");
+									} else {
+										// add the item to lineItems
+										cartData.lineItems.push(item);
+										debug("Pushed new lineItem");
+									}
+									if (cartData.lineItems.length <= config.maxLineItems) {
+										// store cart object to file
+										_data.update('cart',cartData.cartId,cartData,function(err){
+											if (!err) {
+												callback(200,cartData);
+											} else {
+												callback(500,{"error":"Could not update Cart"});
+											}
+										});
+									} else {
+										callback(400,{"error":"Exceeds max lineItems in Cart"});
+									}
+								} else {
+									callback(404);
+								}
+							});	
+						});
+					} else {
+						// not authorised - token / user mismatch
+						callback(403,{"error":"unauthorised request - rejected"});
+					}
+				}); 
+			} else {
+				// not authorised
+				callback(403,{"error":"unauthorised request - rejected"});
+			}
+		});
+	} else {
+		callback(400,{"error":"Missing or invalid field/s"});
+	}
+
+};
+
+// cart - GET
+handlers._cart.get = function(data, callback) {
+	// who is asking?
+	var phone = typeof(data.queryStringObject.phone) == 'string' &&
+			data.queryStringObject.phone.trim().length == 10 
+			? data.queryStringObject.phone.trim()
+			: false ;
+	
+
+	if (phone) {
+		// ensure the token corresponds to the user requesting cart
+		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		handlers._tokens.verifyToken(token, phone, function(tokenIsValid) {
+			if (tokenIsValid) {
+				// fetch cartId from user
+				_data.read('users',phone,function(err,userData){
+					if (!err && userData) {
+						// check cartId in userData
+						var userCartId = typeof(userData.userCartId) == 'string' 
+							&& userData.userCartId.trim().length == 20
+							? userData.userCartId.trim()
+							: false;
+						if (userCartId) {
+							// get cart using userCartId
+							_data.read('cart',userCartId,function(err,cartData){
+								if (!err && cartData) {
+									callback(200,cartData);
+								} else {
+									callback(500,{'error':'userCartId exists but no cart with that id'});
+								}
+							})
+
+						} else {
+							callback(400,{'error':'user does not have a cart'})
+						}
+
+					} else {
+						callback(404);
+					}
+				});
+			} else {
+				callback(403,{"error":"unauthorised request - rejected"})
+			}
+		});
+	} else {
+		callback(400,{"error":"Missing or invalid field"})
+	}
+
+};
+
+// cart - PUT
+handlers._cart.put = function(data, callback) {
+	// who is asking?
+	debug("payload", data.payload)
+	var phone = typeof(data.payload.phone) == 'string' &&
+			data.payload.phone.trim().length == 10 
+			? data.payload.phone.trim()
+			: false ;
+	// check menuIndex is a number
+	var menuIndex = typeof(data.payload.menuIndex) == 'string' 
+		&& parseInt(data.payload.menuIndex) > -1
+			? data.payload.menuIndex
+			: false ;
+
+	// How many?
+	var quantity = typeof(data.payload.quantity) == 'string' 
+		&& parseInt(data.payload.quantity) > 0 
+			? data.payload.quantity.trim()
+			: false ;
+
+	debug("phone",phone);
+	debug("menuItem",menuIndex);
+	debug("quantity",quantity);
+
+	if (phone) {
+		// check token
+		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		handlers._tokens.verifyToken(token, phone, function(tokenIsValid) {
+			if (tokenIsValid) {
+				// get cart for this user
+				debug("Got Valid Token");
+				_data.read('users',phone,function(err,userData){
+					if (!err && userData) {
+						debug("Got user")
+						// fetch userCartId
+						// but check if we have a cart if not set it to empty (false)
+						var userCartId =  typeof(userData.userCartId) == 'string' 
+							&& userData.userCartId.trim().length == 20
+								? userData.userCartId.trim()
+								: false;
+						if (userCartId) {
+							// get cartData
+							debug("Got carId");
+							_data.read('cart',userCartId,function(err,cartData){
+								if (!err && cartData) {
+									// get info on lineItems for further processing - an array of menuIndex in lineItems
+									var menuIndexInLineItems = [];
+									cartData.lineItems.forEach(function(lineItem) {
+										menuIndexInLineItems.push(lineItem.menuIndex)
+									});
+									///////////////////////////////////////////
+									if (menuIndex) {
+									    // both present so modify quantity
+									    // but first get the position of menuItem whose quantity is to be changed
+									    var positionOfItem = menuIndexInLineItems.indexOf(menuIndex);
+									    if (positionOfItem == -1) {
+									        // we dont have the item to update
+									        // this should not happen
+									        callback(400,{"error":"Item does not exist in cart"});
+									    }
+									    
+									    debug("Array of menuIndex",menuIndexInLineItems);
+									    debug("position to delete",positionOfItem);
+
+									    if (quantity) {
+									        // update quantity
+									        var tmp = parseInt(quantity);
+									        cartData.lineItems[positionOfItem].quantity = String(tmp);
+									    } else {
+									        // quantity is false implies delete the line items for this menuIndex
+									        cartData.lineItems.splice(positionOfItem,1);
+									    }
+
+									} else {    // menuIndex not specified
+									    if (!quantity) {
+									        // lineItems=[] ; delete all lineitems
+									        cartData.lineItems=[];
+									    } else {
+									        callback(400,{"error":"Insufficient info for update"});
+									    }
+									}
+									////////////////////////////////////////////
+									// carData is ready for storage
+									_data.update('cart',userCartId,cartData,function(err){
+										if (!err) {
+											callback(200,cartData);
+										} else {
+											callback(500,{"error":"Cart not found"})
+										}
+									});
+
+								} else {
+									callback(500,{"error":"userCartId exists but no associated cart"});	
+								}
+							});
+						} else {
+							callback(400,{"error":"User cart does not exist- nothing to update"});
+						}
+					} else {
+						callback(500,{"error":"user not found"});
+					}
+				});
+
+			} else {
+				callback(403,{"error":"unauthorised request - rejected"})
+			}
+		})
+	} else {
+		callback(400,{"error":"Missing or invalid field"})
+	} 
+
+};
+
+
+// cart - DELETE
+handlers._cart.delete = function(data, callback) {
+
+};
+
+// end of CART Handler
+
 // MENU : for now one can only get items from the menu
 handlers.menu = function(data, callback) {
 	var acceptableMethods = ['get'];
@@ -41,7 +357,7 @@ handlers._menu.get = function(data,callback) {
 
 	debug("menuIndex", menuIndex);
 	debug("phone",phone);
-	
+
 	if (menuIndex && phone) {
 		// check if there is a valid 'token' (i.e. belongs to a user and not expired)
 		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;

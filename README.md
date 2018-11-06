@@ -74,3 +74,34 @@ one file per menu item will be generated in the `.data/menu` directory
 
 
 ---
+
+##### Cart
+
+the following CART structure contains reference to USER by phone, it has complete info on menuitems to place and order and calculate total amount. 
+Assumption: 
+- One user has only one CART and is indicated by reference to cartID in the USER record.
+```
+{
+    "cartId": "5be10cff6278f1eebbf1587f",
+    "phone": "9425903782",
+    "lineItems": [
+      {
+        "id": "0",
+        "menuIndex": 0,
+        "name": "Pizza est laborum",
+        "size": "12 inch",
+        "price": 105.79,
+        "Quantity": 1
+      },
+      {
+        "id": "1",
+        "menuIndex": 1,
+        "name": "Pizza dolor aute",
+        "size": "8 inch",
+        "price": 134.91,
+        "Quantity": 3
+      }
+    ]
+  }
+```
+
