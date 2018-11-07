@@ -55,65 +55,120 @@ helpers.createRandomString = function(strLength) {
 }
 
 // send an SMS message via Twilio
-helpers.sendTwilioSms = function(phone, msg, callback) {
-	// validate params
-	phone = typeof(phone) == 'string' && phone.trim().length == 10 ? phone.trim() : false;
-	msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length > 0 ? msg.trim() : false;
+helpers.sendTwilioSms = function(phone,msg,callback){
+  // Validate parameters
+  phone = typeof(phone) == 'string' && phone.trim().length == 10 ? phone.trim() : false;
+  msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 1600 ? msg.trim() : false;
+  if(phone && msg){
 
-	if (msg && phone) {
-		// config request payload to send to twilio
-		var payload = {
-			'From':config.twilio.fromPhone,
-			'To': '+91'+phone,
-			'Body': msg 
-		};
-		// stingify he payload
-		var stringPayload = querystring.stringify(payload);
-		// configure request details
-		var requestDetails = {
-			'protocol':'https:',
-			'hostname':'api.twilio.com',
-			'methon':'POST',
-			'path': '/2010-04-01/Accounts/'+config.twilio.accountSid+'/Messages.json',
-			'auth': config.twilio.accountSid+':'+config.twilio.authToken,
-			'headers': {
-				'Content-Type' : 'application/x-www-form-urlencoded',
-				'Content-Length': Buffer.byteLength(stringPayload)
-			}
-		};
-		//instantiate request object
-		var req = https.request(requestDetails,function(res){
-			// grab the status of sent request
-			var status = res.statusCode;
-			//call back succfully if the request went thru
-			if (status = 200 || status == 201) {
-				callback(false);
-			} else {
-				callback('status code returned was'+status);
-			}
-		});
+    // Configure the request payload
+    var payload = {
+      'From' : config.twilio.fromPhone,
+      'To' : '+1'+phone,
+      'Body' : msg
+    };
+    var stringPayload = querystring.stringify(payload);
 
-		// bind to the error event so that it does not get thrown
-		req.on('error', function(e){
-			callback(e); 
-		})
 
-		// add the payload
-		req.write(stringPayload);
+    // Configure the request details
+    var requestDetails = {
+      'protocol' : 'https:',
+      'hostname' : 'api.twilio.com',
+      'method' : 'POST',
+      'path' : '/2010-04-01/Accounts/'+config.twilio.accountSid+'/Messages.json',
+      'auth' : config.twilio.accountSid+':'+config.twilio.authToken,
+      'headers' : {
+        'Content-Type' : 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(stringPayload)
+      }
+    };
 
-		// end the request - at this point the request gets send.
-		req.end();
+    // Instantiate the request object
+    var req = https.request(requestDetails,function(res){
+        // Grab the status of the sent request
+        var status =  res.statusCode;
+        // Callback successfully if the request went through
+        if(status == 200 || status == 201){
+          callback(false);
+        } else {
+          callback('Status code returned was '+status);
+        }
+    });
 
-	} else {
-		callback('Given parameters were missing or invalid')
-	}
+    // Bind to the error event so it doesn't get thrown
+    req.on('error',function(e){
+      callback(e);
+    });
 
+    // Add the payload
+    req.write(stringPayload);
+
+    // End the request
+    req.end();
+
+  } else {
+    callback('Given parameters were missing or invalid');
+  }
 };
 
 
+helpers.chargeTheCard = function(phone,msg,amount,callback){
+  // Validate parameters
+  amount = typeof(amount) == 'number' && amount > 100 ? amount : false;
+  msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 100 ? msg.trim() : false;
+  if(amount && msg){
+
+    // Configure the request payload
+    var payload = {
+      'amount':amount,
+      'currency':'usd',
+      'description':msg,
+      'source':'tok_visa'
+    };
+    
+    var stringPayload = querystring.stringify(payload);
 
 
+    // Configure the request details
+    var requestDetails = {
+      'protocol':'https:',
+      'hostname':'api.stripe.com',
+      'method':'POST',
+      'path': '/v1/charges',
+      'auth': config.stripe.sk,
+      'headers': {
+        'Content-Type' : 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(stringPayload)
+      }
+    };
 
+    // Instantiate the request object
+    var req = https.request(requestDetails,function(res){
+        // Grab the status of the sent request
+        var status =  res.statusCode;
+        // Callback successfully if the request went through
+        if(status == 200 || status == 201){
+          callback(false);
+        } else {
+          callback('Status code returned was '+status);
+        }
+    });
+
+    // Bind to the error event so it doesn't get thrown
+    req.on('error',function(e){
+      callback(e);
+    });
+
+    // Add the payload
+    req.write(stringPayload);
+
+    // End the request
+    req.end();
+
+  } else {
+    callback('Given parameters were missing or invalid');
+  }
+};
 
 
 

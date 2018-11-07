@@ -16,8 +16,11 @@ environments.staging = {
 	'twilio' : {
     'accountSid' : 'ACb32d411ad7fe886aac54c665d25e5c5d',
     'authToken' : '9455e3eb3109edc12e3d8c92768f7a67',
-    'fromPhone' : '+15005550006'
-  }
+    'fromPhone' : '+15095550006'
+  	},
+  	'stripe' : {
+  		'sk': 'sk_test_dgkI90d3LsUKf5IBQ07ZMbYB'
+  	}
 };
 
 environments.production = {
@@ -31,7 +34,10 @@ environments.production = {
     'accountSid' : 'ACb32d411ad7fe886aac54c665d25e5c5d',
     'authToken' : '9455e3eb3109edc12e3d8c92768f7a67',
     'fromPhone' : '+15005550006'
-  }
+  	},
+  'stripe' : {
+  		'sk': 'sk_test_dgkI90d3LsUKf5IBQ07ZMbYB'
+  	}
 };
 
 // determine which one environment was passed as command line argument

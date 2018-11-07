@@ -1,0 +1,188 @@
+== Info:   Trying 52.26.14.11...
+== Info: TCP_NODELAY set
+== Info: Connected to api.stripe.com (52.26.14.11) port 443 (#0)
+== Info: ALPN, offering h2
+== Info: ALPN, offering http/1.1
+== Info: Cipher selection: ALL:!EXPORT:!EXPORT40:!EXPORT56:!aNULL:!LOW:!RC4:@STRENGTH
+== Info: successfully set certificate verify locations:
+== Info:   CAfile: /etc/ssl/cert.pem
+  CApath: none
+== Info: TLSv1.2 (OUT), TLS handshake, Client hello (1):
+=> Send SSL data, 220 bytes (0xdc)
+0000: .......-C..........Z...xj..0....X|..R!..T.......0.,.(.$.......k.
+0040: 9...........=.5...../.+.'.#.......g.3...E...<./...A.............
+0080: [.........api.stripe.com........................................
+00c0: .................h2.http/1.1
+== Info: TLSv1.2 (IN), TLS handshake, Server hello (2):
+<= Recv SSL data, 102 bytes (0x66)
+0000: ...b.........[.....&g...Y..!......%..= ...|....H..XZ=...]..]9}E
+0040: 3=....../...........................h2
+== Info: TLSv1.2 (IN), TLS handshake, Certificate (11):
+<= Recv SSL data, 2954 bytes (0xb8a)
+0000: ..........0...0...........]..ua..I..#..Y_0...*.H........0u1.0...
+0040: U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1402..U
+0080: ...+DigiCert SHA2 Extended Validation Server CA0...180817000000Z
+00c0: ..181120120000Z0..1.0...U....Private Organization1.0...+.....7<.
+0100: ....US1.0...+.....7<.....Delaware1.0...U....46755061.0...U....US
+0140: 1.0...U....California1.0...U....San Francisco1.0...U....Stripe, 
+0180: Inc1.0...U....api.stripe.com0.."0...*.H.............0..........s
+01c0: ...U......w..Z......5_.gzN.ZE>......-..K.W|~G....|Z.. .;g6d..\p.
+0200: .k.$oB)z)..>..KG....,..YY#...I........../>...H!....#>).CGW..cN.
+0240: .Z..{......g4V5........Y.B_.....@...\.~...I.veW.s..?|.,<8U..|m..
+0280: .....g'q#V...].t..J1}..z/.P89..:E.l.9.B.Xw%9a......c...PG.ur....
+02c0: ......0...0...U.#..0...=.P......J`.e.!.....0...U........b8.?v9e.
+0300: .c7.H....I0...U....0...api.stripe.com0...U...........0...U.%..0.
+0340: ..+.........+.......0u..U...n0l04.2.0..http://crl3.digicert.com/
+0380: sha2-ev-server-g2.crl04.2.0..http://crl4.digicert.com/sha2-ev-se
+03c0: rver-g2.crl0K..U. .D0B07..`.H...l..0*0(..+.........https://www.d
+0400: igicert.com/CPS0...g....0....+........|0z0$..+.....0...http://oc
+0440: sp.digicert.com0R..+.....0..Fhttp://cacerts.digicert.com/DigiCer
+0480: tSHA2ExtendedValidationServerCA.crt0...U.......0.0.....+.....y..
+04c0: ..........v.......X......gp.<5.......w.........eI.2X.....G0E. vz
+0500: .F.t ......d.M......21hZQ......!....b..:*.wn.)14..R....\...S..#.
+0540: u.v.V.../.......D.>.Fv....\....U.......eI.2......G0E.!..+z....A.
+0580: .@?.._nT....Zk.]9[.y.=.. gz.=w.O2.O......&...yP.\w.Z....k0...*.H
+05c0: ..................O.3e...@...b........W'@.bi.....L^..&....E.....
+0600: . H..fx.%.u.g}..x..0."g.<D'.%...F9.UJ...j.m=R...m...}....m......
+0640: ....._...}`...)w...L.=X,.*.B...2D%.>......v.c.q"..A]..2..e.\K...
+0680: ?~..&.B.7L4....;.m..x.W.h...x...Yq.....6X.r....p*.PK......Iph.2
+06c0: ....so5.+..t....0...0...........y.D.... .a_.k..0...*.H........0l
+0700: 1.0...U....US1.0...U....DigiCert Inc1.0...U....www.digicert.com1
+0740: +0)..U..."DigiCert High Assurance EV Root CA0...131022120000Z..2
+0780: 81022120000Z0u1.0...U....US1.0...U....DigiCert Inc1.0...U....www
+07c0: .digicert.com1402..U...+DigiCert SHA2 Extended Validation Server
+0800:  CA0.."0...*.H.............0.........S..Q....HKg'..I.9.......g(.
+0840: ...c...@8........=>...2.......d!....4.R.+.h.............8wTS_.y?
+0880: .....K+...c.5.}..YK.QJ........j...d..U....PlT....J...........U.
+08c0: .q4...-...%...!..M...9&........!p.oo.\...E.VW(~..AW...'....*.!#u
+0900: ..-..5..w.s...-......Nb~..q.,....(.3........I0..E0...U.......0..
+0940: .....0...U...........0...U.%..0...+.........+.......04..+.......
+0980: .(0&0$..+.....0...http://ocsp.digicert.com0K..U...D0B0@.>.<.:htt
+09c0: p://crl4.digicert.com/DigiCertHighAssuranceEVRootCA.crl0=..U. .6
+0a00: 0402..U. .0*0(..+.........https://www.digicert.com/CPS0...U.....
+0a40: .=.P......J`.e.!.....0...U.#..0....>.i...G...&....cd+.0...*.H...
+0a80: ......................4.t..v.....J.B.?..M.|....P...M...)!....<!.
+0ac0: ..Ip.z.....:W.}W*@t.....P.WGu.}U .G7Pr....b.-.Z.....,R..c.s.q.I
+0b00: '#.d..8..ch<.R.Xy.,...m.1...|l.,...w.7..2.....J.N;F...........^.
+0b40: =..x...{2....\...U.ZVh."p.<.q...E;....Q..{b.o.t.......yP....;.Y'
+0b80: .5(..&~..z
+== Info: TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+<= Recv SSL data, 333 bytes (0x14d)
+0000: ...I...A...!..g..$..._6....(#..'r....':l........e,H....qgHN....
+0040: %..ro..........=....|......T....J..~w.......,IR.o.c7x`..%../.9q.
+0080: l..L..w..F!.=..2....7+.......$..>..u".[..`.F6^<..^.$.6.jn......
+00c0: ...9M9Q&wi.Q.2..V.P.%,@.W&.Q8..k.o...9O....y.?.i!.C....V.K..m..y
+0100: ..*"^.z....3...*.|N......0x|.[.}W....o... -X..i........b.3c...RC
+0140: ....s....f..O
+== Info: TLSv1.2 (IN), TLS handshake, Server finished (14):
+<= Recv SSL data, 4 bytes (0x4)
+0000: ....
+== Info: TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+=> Send SSL data, 70 bytes (0x46)
+0000: ...BA......H...s.......?..X..V...?...z[.).U.._...2...k..O.....zX
+0040: P.....
+== Info: TLSv1.2 (OUT), TLS change cipher, Client hello (1):
+=> Send SSL data, 1 bytes (0x1)
+0000: .
+== Info: TLSv1.2 (OUT), TLS handshake, Finished (20):
+=> Send SSL data, 16 bytes (0x10)
+0000: ........(..x....
+== Info: TLSv1.2 (IN), TLS change cipher, Client hello (1):
+<= Recv SSL data, 1 bytes (0x1)
+0000: .
+== Info: TLSv1.2 (IN), TLS handshake, Finished (20):
+<= Recv SSL data, 16 bytes (0x10)
+0000: .......k.n.I..7.
+== Info: SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
+== Info: ALPN, server accepted to use h2
+== Info: Server certificate:
+== Info:  subject: businessCategory=Private Organization; jurisdictionCountryName=US; jurisdictionStateOrProvinceName=Delaware; serialNumber=4675506; C=US; ST=California; L=San Francisco; O=Stripe, Inc; CN=api.stripe.com
+== Info:  start date: Aug 17 00:00:00 2018 GMT
+== Info:  expire date: Nov 20 12:00:00 2018 GMT
+== Info:  subjectAltName: host "api.stripe.com" matched cert's "api.stripe.com"
+== Info:  issuer: C=US; O=DigiCert Inc; OU=www.digicert.com; CN=DigiCert SHA2 Extended Validation Server CA
+== Info:  SSL certificate verify ok.
+== Info: Using HTTP2, server supports multi-use
+== Info: Connection state changed (HTTP/2 confirmed)
+== Info: Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+== Info: Server auth using Basic with user 'sk_test_dgkI90d3LsUKf5IBQ07ZMbYB'
+== Info: Using Stream ID: 1 (easy handle 0x7f97f8007c00)
+=> Send header, 223 bytes (0xdf)
+0000: POST /v1/charges HTTP/2
+0019: Host: api.stripe.com
+002f: Authorization: Basic c2tfdGVzdF9kZ2tJOTBkM0xzVUtmNUlCUTA3Wk1iWUI
+006f: 6
+0072: User-Agent: curl/7.54.0
+008b: Accept: */*
+0098: Content-Length: 73
+00ac: Content-Type: application/x-www-form-urlencoded
+00dd: 
+== Info: Connection state changed (MAX_CONCURRENT_STREAMS updated)!
+=> Send data, 73 bytes (0x49)
+0000: amount=600&currency=usd&description=Another payment trace&source
+0040: =tok_visa
+== Info: We are completely uploaded and fine
+<= Recv header, 13 bytes (0xd)
+0000: HTTP/2 200 
+<= Recv header, 15 bytes (0xf)
+0000: server: nginx
+<= Recv header, 37 bytes (0x25)
+0000: date: Wed, 07 Nov 2018 10:54:54 GMT
+<= Recv header, 32 bytes (0x20)
+0000: content-type: application/json
+<= Recv header, 22 bytes (0x16)
+0000: content-length: 1822
+<= Recv header, 40 bytes (0x28)
+0000: access-control-allow-credentials: true
+<= Recv header, 64 bytes (0x40)
+0000: access-control-allow-methods: GET, POST, HEAD, OPTIONS, DELETE
+<= Recv header, 32 bytes (0x20)
+0000: access-control-allow-origin: *
+<= Recv header, 137 bytes (0x89)
+0000: access-control-expose-headers: Request-Id, Stripe-Manage-Version
+0040: , X-Stripe-External-Auth-Required, X-Stripe-Privileged-Session-R
+0080: equired
+<= Recv header, 29 bytes (0x1d)
+0000: access-control-max-age: 300
+<= Recv header, 35 bytes (0x23)
+0000: cache-control: no-cache, no-store
+<= Recv header, 32 bytes (0x20)
+0000: request-id: req_plVoKFv1ql0V1b
+<= Recv header, 28 bytes (0x1c)
+0000: stripe-version: 2018-10-31
+<= Recv header, 73 bytes (0x49)
+0000: strict-transport-security: max-age=31556926; includeSubDomains; 
+0040: preload
+<= Recv header, 2 bytes (0x2)
+0000: 
+<= Recv data, 1822 bytes (0x71e)
+0000: {.  "id": "ch_1DTogTDHh59tXQppN0u7Pza8",.  "object": "charge",. 
+0040:  "amount": 600,.  "amount_refunded": 0,.  "application": null,. 
+0080:  "application_fee": null,.  "balance_transaction": "txn_1DTogUDH
+00c0: h59tXQppKHfPrTJy",.  "captured": true,.  "created": 1541588093,.
+0100:   "currency": "usd",.  "customer": null,.  "description": "Anoth
+0140: er payment trace",.  "destination": null,.  "dispute": null,.  "
+0180: failure_code": null,.  "failure_message": null,.  "fraud_details
+01c0: ": {.  },.  "invoice": null,.  "livemode": false,.  "metadata": 
+0200: {.  },.  "on_behalf_of": null,.  "order": null,.  "outcome": {. 
+0240:    "network_status": "approved_by_network",.    "reason": null,.
+0280:     "risk_level": "normal",.    "risk_score": 45,.    "seller_me
+02c0: ssage": "Payment complete.",.    "type": "authorized".  },.  "pa
+0300: id": true,.  "payment_intent": null,.  "receipt_email": null,.  
+0340: "receipt_number": null,.  "refunded": false,.  "refunds": {.    
+0380: "object": "list",.    "data": [..    ],.    "has_more": false,. 
+03c0:    "total_count": 0,.    "url": "/v1/charges/ch_1DTogTDHh59tXQpp
+0400: N0u7Pza8/refunds".  },.  "review": null,.  "shipping": null,.  "
+0440: source": {.    "id": "card_1DTogTDHh59tXQppWKn4d3fu",.    "objec
+0480: t": "card",.    "address_city": null,.    "address_country": nul
+04c0: l,.    "address_line1": null,.    "address_line1_check": null,. 
+0500:    "address_line2": null,.    "address_state": null,.    "addres
+0540: s_zip": null,.    "address_zip_check": null,.    "brand": "Visa"
+0580: ,.    "country": "US",.    "customer": null,.    "cvc_check": nu
+05c0: ll,.    "dynamic_last4": null,.    "exp_month": 11,.    "exp_yea
+0600: r": 2019,.    "fingerprint": "Cck8BIQw6L5RmROv",.    "funding": 
+0640: "credit",.    "last4": "4242",.    "metadata": {.    },.    "nam
+0680: e": null,.    "tokenization_method": null.  },.  "source_transfe
+06c0: r": null,.  "statement_descriptor": null,.  "status": "succeeded
+0700: ",.  "transfer_group": null.}.
+== Info: Connection #0 to host api.stripe.com left intact

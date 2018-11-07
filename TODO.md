@@ -37,7 +37,24 @@ Assignment_2
 6.5 and 5.1 implemented and tested - total 5 hours on 7/Nov/18
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-7. create a structure for order
-7.1 Review changes needed to user in view of Cart and Order
+7. create a structure for order:
+	Order structure - will be same as that of cart except that it will have additional items as follows:
+
+	a) orderID
+	b) orderAmount 
+	c) paymentStatus
+	d) paymentMethod
+	e) deliveryStatus
+	f) deliveryBy
+	g) {cart}
+
+	(POST /order/ )Once a cart is checked out the order is created - and userCartId expunged from user record and update it with orderId
+	(GET /order/) fetches a order given a phone 
+	(PUT /order/) restores it back to a cart and order is deleted, update user record with userCartId and removes orderId
+	(DELETE /order/) deletes the order - removes orderId from user record
+  
+
+7.1 read card payment API - swipe.com : DONE - took about 4 hours 7/Nov - tested works well
+
 
 
