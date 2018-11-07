@@ -59,6 +59,18 @@ lib.read = function(dir, file, callback) {
 	});
 };
 
+// read data from a file Syncronously
+lib.readSync = function(dir, file, callback) {
+	filename = lib.baseDir+'/'+dir+'/'+file+'.json';
+	data = fs.readFileSync(filename,'utf-8');
+	if (data) {
+		var parseData = helpers.parseJsonToObject(data);
+		return parseData;
+	} else {
+		return false;
+	}
+};
+
 // Update data inside a file
 lib.update  = function(dir, file, data, callback) {
 	// open the file for writing

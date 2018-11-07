@@ -355,32 +355,60 @@ handlers._menu.get = function(data,callback) {
 			? data.queryStringObject.phone.trim()
 			: false ;
 
-	debug("menuIndex", menuIndex);
-	debug("phone",phone);
+	if (phone) {
+	    // check if there is a valid 'token' (i.e. belongs to a user and not expired)
+	    var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+	    // verfify that the give token is valid for the phone number (user)
+	    handlers._tokens.verifyToken(token, phone, function(tokenIsValid) {
+	        if (tokenIsValid) {
+	            // user has valid token - read the menu item/s and return menuData
+	            if (menuIndex) {
+	                // get one item from menu indicated by menuIndex
+	                _data.read('menu',menuIndex, function(err,menuData) {
+	                    if (!err && menuData) {
+	                        // we have a menu item
+	                        callback(200,menuData)
+	                    } else {
+	                        // no items
+	                        callback(404);
+	                    }
+	                });
+	            } else {
+	                // return all items
+	                _data.list('menu',function(err,menuList){
+	                    if (!err && menuList) {
+	                        var allItems = [];
+	                        var readError = false;
+	                        var readErrorCount = 0;
+	                        var menuData = false;
 
-	if (menuIndex && phone) {
-		// check if there is a valid 'token' (i.e. belongs to a user and not expired)
-		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
-		// verfify that the give token is valid for the phone number (user)
-		handlers._tokens.verifyToken(token, phone, function(tokenIsValid) {
-			if (tokenIsValid) {
-				// user has valid token - read the menu item and return menuData
-				debug("**tokenIsValue**",tokenIsValid);
-				_data.read('menu',menuIndex, function(err,menuData) {
-					if (!err && menuData) {
-						// we have a menu item
-						callback(200,menuData)
-					} else {
-						// no items
-						callback(404);
-					}
-				});
-			} else {
-				callback(403,{"error":"unauthorised request - rejected"});
-			}	
-		});
+	                        for (i=0; i < menuList.length; i++) {
+	                            menuListItem=menuList[i].trim();	                          
+	                            menuData = _data.readSync('menu',menuListItem)	                            
+                                if (menuData) {
+                                    allItems.push(menuData);
+                                } else {
+                                    readError=true;
+                                    readErrorCount=readErrorCount+1
+                                }     
+	                        }
+	                        if (!readError) {
+	                            callback(200,{"allMenuItems":allItems});	                         
+	                        } else {
+	                            callback(400,{'error':'reading menu '+readErrorCount+' time/s'});
+	                        }
+	                        
+	                    } else {
+	                        callback(400,{"error":"No menu items in menu"});
+	                    }
+	                });
+	            } // menuIndes
+	        } else {
+	            callback(403,{"error":"unauthorised request - rejected"});
+	        } // token is valid   
+	    });
 	} else {
-		callback(400,{'error':'Missing or invalid required field/s'});
+	    callback(400,{'error':'Missing or invalid required field/s'});
 	}
 };
 

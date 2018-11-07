@@ -11,7 +11,7 @@ Assignment_2
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 5. implement and test handlers for menu with authenticate token - 30 mins
-
+5.1 added : List all menu items : 4 hours on 7/Nov/2018
 6. create a json structure for Cart - 30 mins
 6.1 write assumptions about cart and users relationship, and cart logic 	
 6.2 implement and test API doc item 10. "Add to existing Cart, create Cart if it does not exist"
@@ -37,15 +37,4 @@ Assignment_2
 7. create a structure for order
 7.1 Review changes needed to user in view of Cart and Order
 
-8. update API docs for:
-	- Add menu item to Cart for a give user
-	- Del menu item from Cart for a given user
-9. implement and test 8
-
-10. update API docs for:
-	- Get Cart for a given user
-	- Delete cart for a given user
-	- check out Cart and place and order 
-
-11. implement and test 10.
 
