@@ -33,6 +33,9 @@ Assignment_2
 
 6.5 implement and test API doc item 13. "DELETE /cart/?phone=9999999999
 	Note: this deletes the cart and removes its reference from user
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+6.5 and 5.1 implemented and tested - total 5 hours on 7/Nov/18
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 7. create a structure for order
 7.1 Review changes needed to user in view of Cart and Order

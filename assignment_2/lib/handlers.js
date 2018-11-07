@@ -320,7 +320,59 @@ handlers._cart.put = function(data, callback) {
 
 // cart - DELETE
 handlers._cart.delete = function(data, callback) {
+	// who is asking?
+	var phone = typeof(data.queryStringObject.phone) == 'string' &&
+			data.queryStringObject.phone.trim().length == 10 
+			? data.queryStringObject.phone.trim()
+			: false ;
 
+	if (phone) {
+		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		handlers._tokens.verifyToken(token, phone, function(tokenIsValid) {
+			if (tokenIsValid) {
+				// read user record to get userCartId
+				_data.read('users',phone,function(err,userData){
+					if (!err && userData) {
+						// get userCartId
+						var userCartId =  typeof(userData.userCartId) == 'string' 
+							&& userData.userCartId.trim().length == 20
+								? userData.userCartId.trim()
+								: false;
+						if (userCartId) {
+							// delete card
+							_data.delete('cart',userCartId,function(err){
+								if (!err) {
+									// now remove userCartId from userData
+									delete userData.userCartId;
+									// update user record
+									_data.update('users',phone,userData,function(err){
+										if (err) {
+											callback(500,{"error":"Could not update user"})
+										} else {
+											// return - all OK
+											callback(200);
+										}
+									});
+									
+								} else {
+									callback(400,{"error":"cartId with this user has no cart"});
+								}
+							});
+						} else {
+							callback(400,{"error":"No cart with this user"});
+						}
+						/////////////
+					} else {
+						callback(500,{"error":"user not found"})
+					}
+				});
+			} else {
+				callback(403,{"error":"unauthorised request - rejected"});
+			}
+		});
+	} else {
+		callback(400,{"error":"Missing or invalid field"});
+	}
 };
 
 // end of CART Handler
