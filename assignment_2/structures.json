@@ -6,7 +6,9 @@
 	"phone":"9999999990",
 	"email":"artofrunning2015@gmail.com",
 	"tosAgreement":true,
-	"streetAddress":"G1007 Mantri, off KK Road, Bangalore 560061,India"
+	"streetAddress":"G1007 Mantri, off KK Road, Bangalore 560061,India",
+  "UserCartId":"5be10cff6278f1eebbf1587f",
+  "orderIds":[]
 }
 
 
@@ -16,23 +18,6 @@
 	"tokenid":"1oz9bgu21349etf0btgb",
 	"expires":1541475802423
 }
-
-//MENU GENERATOR
-[
-  '{{repeat(30)}}',
-  {
-    menuId: '{{objectId()}}',
-    menuIndex: '{{index()}}',
-    availableToday: '{{bool()}}',
-    price: '{{floating(100, 200, 2, "0.00")}}',
-    picture: 'http://placehold.it/32x32',
-    crust:'{{random("thin", "thick")}}',
-    category: '{{random("Vegetarian", "Non-Vegetarian")}}',
-    name: 'Pizza {{lorem(2,"words")}}',
-    size: '{{random("8", "12", "14")}} inch',
-    description: 'Pizza made from {{lorem(10, "words")}}'
-  }
-]
 
 //MENU
 {
@@ -49,24 +34,49 @@
 }
 
 
-//CART GENERATOR
-[
-  '{{repeat(10)}}',
-  {
-    eCartId: '{{objectId()}}',
-    phone: '{{phone()}}',
-    lineItems : [
-      '{{repeat(1, 3)}}',
-      {
-        id:'{{index}}',
-        menuIndex: '{{index()}}',
-        name: 'Pizza {{lorem(2,"words")}}',
-        size: '{{random("8","12","14")}} inch',
-        price: '{{floating(100,200,2,"0.00")}}',
-        Quantity: '{{random("1","2","3")}}'
-      }
-    ]
-  }
+// ALL MENU ITEMS
+{"allMenuItems" :
+      [
+        {
+          "menuId":"5be05593b945456a196da9b1",
+          "menuIndex":"13",
+          "availableToday":true,
+          "price":137.49,
+          "picture":"http://placehold.it/32x32",
+          "crust":"thick",
+          "category":"Vegetarian",
+          "name":"Pizza non officia",
+          "size":"8 inch",
+          "description":"Pizza made from dolore voluptate culpa reprehenderit ad occaecat et ipsum cillum adipisicing"
+        },
+        {
+          "menuId":"5be05593b945456a196da9b1",
+          "menuIndex":"13",
+          "availableToday":true,
+          "price":137.49,
+          "picture":"http://placehold.it/32x32",
+          "crust":"thick",
+          "category":"Vegetarian",
+          "name":"Pizza non officia",
+          "size":"8 inch",
+          "description":"Pizza made from dolore voluptate culpa reprehenderit ad occaecat et ipsum cillum adipisicing"
+        },
+        {
+          "menuId":"5be05593b945456a196da9b1",
+          "menuIndex":"13",
+          "availableToday":true,
+          "price":137.49,
+          "picture":"http://placehold.it/32x32",
+          "crust":"thick",
+          "category":"Vegetarian",
+          "name":"Pizza non officia",
+          "size":"8 inch",
+          "description":"Pizza made from dolore voluptate culpa reprehenderit ad occaecat et ipsum cillum adipisicing"
+        }
+      ]
+}
+
+
 
 //CART
 {
@@ -75,7 +85,7 @@
     "lineItems": [
       {
         "id": "0",
-        "menuIndex": 0,
+        "menuIndex": "0",
         "name": "Pizza est laborum",
         "size": "12 inch",
         "price": 105.79,
@@ -83,14 +93,51 @@
       },
       {
         "id": "1",
-        "menuIndex": 1,
+        "menuIndex": "1",
         "name": "Pizza dolor aute",
         "size": "8 inch",
         "price": 134.91,
         "Quantity": 3
       }
     ]
-  }
+}
+
+
 
 
 //ORDERS
+{
+  "orderID":"4be1wcff6278f1eebbf1687t",
+  "orderAmount": 239.00,
+  "orderQuantity":4,
+  "paymentMethod": "Visa Express",
+  "paymentStatus": true,
+  "delivery": { "status": false,
+              "by":"TBD",
+              "etd": 012030302302320
+            },
+  "cart" : {
+        "cartId": "5be10cff6278f1eebbf1587f",
+        "phone": "9425903782",
+        "lineItems": [
+          {
+            "id": "0",
+            "menuIndex": 0,
+            "name": "Pizza est laborum",
+            "size": "12 inch",
+            "price": 105.00,
+            "Quantity": 1
+          },
+          {
+            "id": "1",
+            "menuIndex": 1,
+            "name": "Pizza dolor aute",
+            "size": "8 inch",
+            "price": 134.00,
+            "Quantity": 3
+          }
+        ]
+  }
+
+}
+

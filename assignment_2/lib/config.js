@@ -20,6 +20,9 @@ environments.staging = {
   	},
   	'stripe' : {
   		'sk': 'sk_test_dgkI90d3LsUKf5IBQ07ZMbYB'
+  	},
+  	'mailgun' : {
+  		'api':'api:Ya9dd35642a3de4f02bc39e18831c7160-4412457b-a89e681e'
   	}
 };
 
@@ -37,6 +40,9 @@ environments.production = {
   	},
   'stripe' : {
   		'sk': 'sk_test_dgkI90d3LsUKf5IBQ07ZMbYB'
+  	},
+  	'mailgun' : {
+  		'api':'api:Ya9dd35642a3de4f02bc39e18831c7160-4412457b-a89e681e'
   	}
 };
 

@@ -112,7 +112,7 @@ helpers.sendTwilioSms = function(phone,msg,callback){
 };
 
 
-helpers.chargeTheCard = function(phone,msg,amount,callback){
+helpers.chargeTheCard = function(msg,amount,callback){
   // Validate parameters
   amount = typeof(amount) == 'number' && amount > 100 ? amount : false;
   msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 100 ? msg.trim() : false;
@@ -171,10 +171,75 @@ helpers.chargeTheCard = function(phone,msg,amount,callback){
 };
 
 
+// CURL Example for sending email via mailgun
+/*
+curl  --trace-ascii email.trace --user 'api:Ya9dd35642a3de4f02bc39e18831c7160-4412457b-a89e681e' \
+    https://api.mailgun.net/v3/sandbox123.mailgun.org/messages \
+    -F from='Excited User <mailgun@sandbox123.mailgun.or>' \
+    -F to=artofrunning2015@gmail.com \
+    -F subject='Hello' \
+    -F text='Testing some Mailgun awesomeness!'
+
+*/
+
+helpers.sendEmail = function(email,msg,orderData,callback){
+  // Validate parameters
+  email = typeof(email) == 'string' ? email : email;
+  orderData = typeof(orderData) == 'object' ? orderData : false;
+  msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 100 ? msg.trim() : false;
+  if(email && orderData && msg){
+
+    // Configure the request payload
+    var payload = {
+      'from':'mailgun <mailgun@sandbox123.mailgun.or>',
+      'to': email,
+      'message': msg,
+      'subject':'Your order nunumber : '+orderData.orderId
+    };
+    
+    var stringPayload = querystring.stringify(payload);
 
 
+    // Configure the request details
+    var requestDetails = {
+      'protocol':'https:',
+      'hostname':'api.mailgun.net',
+      'method':'POST',
+      'path': '/v3/sandbox123.mailgun.org/messages',
+      'auth': config.mailgun.api,
+      'headers': {
+        'Content-Type' : 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(stringPayload)
+      }
+    };
 
+    // Instantiate the request object
+    var req = https.request(requestDetails,function(res){
+        // Grab the status of the sent request
+        var status =  res.statusCode;
+        // Callback successfully if the request went through
+        if(status == 200 || status == 201){
+          callback(false);
+        } else {
+          callback('Status code returned was '+status);
+        }
+    });
 
+    // Bind to the error event so it doesn't get thrown
+    req.on('error',function(e){
+      callback(e);
+    });
+
+    // Add the payload
+    req.write(stringPayload);
+
+    // End the request
+    req.end();
+
+  } else {
+    callback('Given parameters were missing or invalid');
+  }
+};
 
 
 

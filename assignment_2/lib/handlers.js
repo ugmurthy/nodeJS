@@ -10,6 +10,305 @@ var debug = util.debuglog('handlers');
 var handlers = {};
 
 
+// PAY for ORDER
+handlers.pay = function(data, callback) {
+	var acceptableMethods = ['post'];
+	if (acceptableMethods.indexOf(data.method) > -1){
+		handlers._pay[data.method](data,callback);
+	} else {
+		// 405 is method not acceptable
+		callback(405);
+	}
+};
+
+handlers._pay = {};
+
+handlers._pay.post = function(data, callback) {
+	// check who is asking by checking token in headers
+	var token = typeof(data.headers.token) == 'string' 
+		&& data.headers.token.length == 20
+			 ? data.headers.token 
+			 : false;
+
+	// preformed message based on order ID
+	var message = typeof(data.payload.message) == 'string' 
+		&& data.payload.message.trim().length > 0 
+			? data.payload.message.trim()
+			: false;
+	// amount is dollars - needs to be converted to cents
+	var amountInCents = typeof(data.payload.amount) == 'number' 
+		&& data.payload.amount > 0
+			? Math.floor(data.payload.amount * 100)
+			: false;
+
+	var orderId = typeof(data.payload.orderId) == 'string' ? data.payload.orderId : false;
+
+	debug('OrderId',orderId);
+
+	if (token && message && amountInCents && orderId ) {
+		// read order and get phone
+		_data.read('orders',orderId,function(err,orderData){
+			if (!err && orderData) {
+				userPhone = orderData.cart.phone;
+				handlers._tokens.verifyToken(token, orderData.cart.phone, function(tokenIsValid){
+					if (tokenIsValid) {
+						// make payment
+						helpers.chargeTheCard(message, amountInCents,function(err){
+							if (!err) {
+								// update payment status
+								orderData.payment.status = true;
+								// store orderData
+								_data.update('orders',orderId,orderData,function(err){
+									if (!err) {
+										callback(200,{'paid':amountInCents/100,'status':'SUCCESS'});
+									} else {
+										callback(400,{'error':'Could not update order payment flag to paid','paid':amountInCents/100,'status':'SUCCESS'})
+									}
+								});
+							} else {
+								// failed payment
+								callback(400,{'error':'unsuccessful payment'});
+							}
+						});
+					} else {
+						callback(403,{"error":"unauthorised request - rejected"});
+					}
+				});
+			} else {
+				callback(400,{'error':'order not found'})
+			}
+		});
+
+	} else {
+		callback(400,{'error':'Invalid or missing field/s'})
+	}
+
+};
+
+// ORDER handler
+handlers.orders = function(data, callback) {
+	var acceptableMethods = ['post','get','put','delete'];
+	if (acceptableMethods.indexOf(data.method) > -1){
+		handlers._orders[data.method](data,callback);
+	} else {
+		// 405 is method not acceptable
+		callback(405);
+	}
+};
+
+// container for order sub method
+handlers._orders = {};
+
+// orders - POST
+handlers._orders.post = function(data, callback) {
+	// check who is asking by checking token in headers
+	var token = typeof(data.headers.token) == 'string' 
+		&& data.headers.token.length == 20
+			 ? data.headers.token 
+			 : false;
+
+	// we need the token to be good to process the request
+	if (token) {
+		_data.read('tokens',token,function(err,tokenData){
+			if (!err && tokenData) {
+				var userPhone = tokenData.phone;
+				// get user
+				_data.read('users',userPhone,function(err,userData){
+					if (!err && userData) {
+						// fetch userCartId
+						var userCartId = userData.userCartId;
+						// get cart
+						_data.read('cart',userCartId,function(err,cartData){
+							if (!err && cartData) {
+								// create order object
+								orderData = {};
+								orderData.orderId = 'ORD:'+helpers.createRandomString(16);
+								orderData.cart = cartData;
+								orderData.orderAmount = 0;
+								orderData.orderQuantity=0;
+								orderData.payment = {};
+								orderData.delivery = {};
+								orderData.payment.method = 'Visa Express';
+								orderData.payment.status = false; // not paid
+								orderData.delivery.status = false; // not deliverd
+								orderData.delivery.by = "ToBeDecided"
+								orderData.delivery.etd = Date.now()+1000*90*60;
+								// update OrderData amount and quantity from lineItems
+								var quantity = 0
+								cartData.lineItems.forEach(function(lineItem){
+									quantity = parseInt(lineItem.quantity);
+									orderData.orderAmount = orderData.orderAmount+lineItem.price*quantity;
+									orderData.orderQuantity=orderData.orderQuantity+quantity;
+								});
+								// orderData object is ready for storing
+								// store orderData to file
+								_data.create('orders',orderData.orderId,orderData,function(err){
+									if (!err ) {
+										// update user record with orders, set it to [] if absent
+										var orders = typeof(userData.orders) == 'object' 
+											&& userData.orders instanceof Array
+												? userData.orders
+												: [];
+										// add this orderId to orders in user record
+										orders.push(orderData.orderId);
+										userData.orders = orders;
+										// remove UserCardId from user record
+										delete userData.userCartId
+										// update user record
+										_data.update('users',userPhone,userData,function(err){
+											if (!err) {
+												// delete cart
+												_data.delete('cart',cartData.cartId,function(err){
+													if (!err) {
+														callback(200,orderData);
+													} else {
+														// roll back
+														// restore cartId in user record
+														userData.userCartId = cartData.cartId
+														userData.orders.splice(-1);
+														// update user record
+														_data.update('users',userPhone, userData,function(err){
+															if (err) {
+																callback(500,{"error":"Could not update user"});
+															}
+														});
+														_data.delete('orders',orderData.orderId,function(err){
+															if (err) {
+																callback(400,{'error':'rollback order failed'})
+															}
+														});
+														callback(500,{"error":"Could not delete Cart"});
+													}
+												});
+											} else {
+												// rollback 
+												// delete order that we just wrote
+												_data.delete('orders',orderData.orderId,function(err){
+													if (err) {
+														callback(400,{'error':'rollback order failed'})
+													}
+												});
+												callback(500,{"error":"Could not update user"});
+											}
+										})
+
+									} else {
+										callback(500,{"error":"Could not create order"})
+									}
+								});
+							} else {
+								callback(400,{"error":"cart not found"})
+							}
+						})
+					} else {
+						callback(400,{"error":"user not found"})
+					}
+				})
+			} else {
+				callback(403,{"error":"unauthorised request - rejected"});
+			}
+		});
+	} else {
+		callback(403,{"error":"unauthorised request - rejected"});
+	}
+
+};
+
+// orders - GET
+handlers._orders.get = function(data, callback) {
+callback(false);
+};
+
+// orders - PUT
+handlers._orders.put = function(data, callback) {
+	// check who is asking by checking token in headers
+	var token = typeof(data.headers.token) == 'string' 
+		&& data.headers.token.length == 20
+			 ? data.headers.token 
+			 : false;
+	var orderId = typeof(data.payload.orderId) == 'string' ? data.payload.orderId : false;
+
+	if (token) {
+		if (orderId) {
+			// read order to get cart
+			_data.read('orders',orderId,function(err,orderData){
+				if (!err && orderData) {
+					// check if we have a authentic token
+					debug(helpers.green,"TOKEN: "+token)
+					debug(helpers.green,"PHONE: "+orderData.cart.phone);
+
+					handlers._tokens.verifyToken(token, orderData.cart.phone, function(tokenIsValid){
+						if (tokenIsValid) {
+							debug(helpers.green,"VALID TOKEN");
+							// yes - token is good
+							// fetch cart
+							var cart = orderData.cart;
+							// create cart
+							_data.create('cart', cart.cartId, cart, function(err){
+								if (!err) {
+									// read user and update userCartId
+									_data.read('users',cart.phone,function(err,userData){
+										if (!err && userData) {
+											// update cartid in user record
+											userData.userCartId = cart.cartId;
+											// @TODO delete orderId from orders in user record
+											positionOfOrderId = userData.orders.indexOf(orderId);
+											if (positionOfOrderId != -1 ) {
+												// remove orderId from user record
+												userData.orders.splice(positionOfOrderId,1); 
+											}
+
+											// store updated user record to file
+											_data.update('users',cart.phone,userData,function(err){
+												if (!err) {
+													// delete order
+													_data.delete('orders',orderId,function(err){
+														if (err) {
+															callback(500,{"error":"Could not delete order"});
+														}
+													});
+													// success // review what to return cart or userData: one can get to either use any of these objects
+													callback(200,cart);
+												} else {
+													callback(500,{"error":"Could not update user"});
+												}
+											});
+										} else {
+											callback(400,{"error":"user not found"});
+										}
+									})
+								} else {
+									callback(500,{"error":"Could not create Cart"});
+								}
+							});
+							
+						} else {
+							callback(403,{"error":"unauthorised request - rejected"});
+						}
+					});
+				} else {
+					callback(400,{"error":"order not found"});
+				}
+			});
+		} else {
+			callback(400,{"error":"missing or invalid field"});
+		}
+	}	else {
+		// invalid token
+		callback(403,{"error":"unauthorised request - rejected"});
+	}
+
+};
+
+
+// orders - DELETE
+handlers._orders.delete = function(data, callback) {
+callback(false);
+};
+
+
+// ORDERS END
+
 // CART handler
 handlers.cart = function(data, callback) {
 	var acceptableMethods = ['post','get','put','delete'];
@@ -652,13 +951,19 @@ handlers._users.put = function(data,callback) {
 		   		: false;
 
 
-	// validate email address format	   		
-	var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-	result = data.payload.email.match(regex);
-	var email = typeof(result) == 'object' 
-		&& result != null 
-			? result[0] 
-			: false 
+	// validate email address format	
+	// can't run match if email is not a string.   		
+	if (typeof(email) == 'string') {
+		var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+		result = data.payload.email.match(regex);
+		var email = typeof(result) == 'object' 
+			&& result != null 
+				? result[0] 
+				: false 
+	} else {
+		// spare match from giving an error
+		email = false;
+	}
 
 	var phone 
 		= typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 

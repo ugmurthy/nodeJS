@@ -1,3 +1,13 @@
+////// IGNORE THIS FILE FOR ASSIGNMENT #2
+////// This file has been to compare two functions
+////// 1, chargeTheCard and
+////// 2. cardPayment
+////// while both look identical - one of them works (return right status code) while the other
+///// always returns false. - nned to look for difference and understand reason
+
+
+
+
 helpers.chargeTheCard = function(phone,msg,amount,callback){
   // Validate parameters
   amount = typeof(amount) == 'number' && amount > 100 ? amount : false;
