@@ -100,4 +100,5 @@ Assignment_2
 	- review error message of API doc item 15
 	- POST /pay/ need to include token and validate it - done
 	- chase MAILGUN
+9.0 SECURITY Issues : had to delete GITHUB Repository as my MAILGUN secret key was in Github config.sys. Config.sys location changed to https and recreated github repo
 

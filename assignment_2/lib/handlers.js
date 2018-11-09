@@ -3,7 +3,7 @@
 //dependencies
 var _data = require('./data'); 
 var helpers = require('./helpers');
-var config = require('./config');
+var config = require('../https/config');
 var util = require('util');
 var debug = util.debuglog('handlers');
 // Define all the handlers
@@ -45,10 +45,14 @@ handlers._pay.post = function(data, callback) {
 
 	debug('OrderId',orderId);
 
-	if (token && message && amountInCents && orderId ) {
+	// not checking for amountInCents purposefully - if false use orderAmount
+	if (token && message  && orderId ) {
 		// read order and get phone
 		_data.read('orders',orderId,function(err,orderData){
 			if (!err && orderData) {
+				if (!amountInCents) {
+					amountInCents = Math.floor(orderData.orderAmount * 100)
+				}
 				userPhone = orderData.cart.phone;
 				handlers._tokens.verifyToken(token, orderData.cart.phone, function(tokenIsValid){
 					if (tokenIsValid) {
@@ -233,59 +237,65 @@ handlers._orders.put = function(data, callback) {
 			// read order to get cart
 			_data.read('orders',orderId,function(err,orderData){
 				if (!err && orderData) {
-					// check if we have a authentic token
-					debug(helpers.green,"TOKEN: "+token)
-					debug(helpers.green,"PHONE: "+orderData.cart.phone);
+					// check payment status : process if status is paid (false)
+					if (!orderData.payment.status) {
+						// check if we have a authentic token
+						debug(helpers.green,"TOKEN: "+token)
+						debug(helpers.green,"PHONE: "+orderData.cart.phone);
 
-					handlers._tokens.verifyToken(token, orderData.cart.phone, function(tokenIsValid){
-						if (tokenIsValid) {
-							debug(helpers.green,"VALID TOKEN");
-							// yes - token is good
-							// fetch cart
-							var cart = orderData.cart;
-							// create cart
-							_data.create('cart', cart.cartId, cart, function(err){
-								if (!err) {
-									// read user and update userCartId
-									_data.read('users',cart.phone,function(err,userData){
-										if (!err && userData) {
-											// update cartid in user record
-											userData.userCartId = cart.cartId;
-											// @TODO delete orderId from orders in user record
-											positionOfOrderId = userData.orders.indexOf(orderId);
-											if (positionOfOrderId != -1 ) {
-												// remove orderId from user record
-												userData.orders.splice(positionOfOrderId,1); 
-											}
-
-											// store updated user record to file
-											_data.update('users',cart.phone,userData,function(err){
-												if (!err) {
-													// delete order
-													_data.delete('orders',orderId,function(err){
-														if (err) {
-															callback(500,{"error":"Could not delete order"});
-														}
-													});
-													// success // review what to return cart or userData: one can get to either use any of these objects
-													callback(200,cart);
-												} else {
-													callback(500,{"error":"Could not update user"});
+						handlers._tokens.verifyToken(token, orderData.cart.phone, function(tokenIsValid){
+							if (tokenIsValid) {
+								debug(helpers.green,"VALID TOKEN");
+								// yes - token is good
+								// fetch cart
+								var cart = orderData.cart;
+								// create cart
+								_data.create('cart', cart.cartId, cart, function(err){
+									if (!err) {
+										// read user and update userCartId
+										_data.read('users',cart.phone,function(err,userData){
+											if (!err && userData) {
+												// update cartid in user record
+												userData.userCartId = cart.cartId;
+												// @TODO delete orderId from orders in user record
+												positionOfOrderId = userData.orders.indexOf(orderId);
+												if (positionOfOrderId != -1 ) {
+													// remove orderId from user record
+													userData.orders.splice(positionOfOrderId,1); 
 												}
-											});
-										} else {
-											callback(400,{"error":"user not found"});
-										}
-									})
-								} else {
-									callback(500,{"error":"Could not create Cart"});
-								}
-							});
-							
-						} else {
-							callback(403,{"error":"unauthorised request - rejected"});
-						}
-					});
+
+												// store updated user record to file
+												_data.update('users',cart.phone,userData,function(err){
+													if (!err) {
+														// delete order
+														_data.delete('orders',orderId,function(err){
+															if (err) {
+																callback(500,{"error":"Could not delete order"});
+															}
+														});
+														// success // review what to return cart or userData: one can get to either use any of these objects
+														callback(200,cart);
+													} else {
+														callback(500,{"error":"Could not update user"});
+													}
+												});
+											} else {
+												callback(400,{"error":"user not found"});
+											}
+										})
+									} else {
+										callback(500,{"error":"Could not create Cart"});
+									}
+								});
+								
+							} else {
+								callback(403,{"error":"unauthorised request - rejected"});
+							}
+						});
+					} else {
+						// order is already paid for cannot update
+						callback(400,{"error":"Payment done cannot update order"});
+					}
 				} else {
 					callback(400,{"error":"order not found"});
 				}

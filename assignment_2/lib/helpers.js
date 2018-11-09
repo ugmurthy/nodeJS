@@ -2,7 +2,7 @@
 
 // dependencies
 var crypto = require('crypto');
-var config = require('./config');
+var config = require('../https/config');
 var querystring = require('querystring');
 var https = require('https');
 
@@ -171,16 +171,6 @@ helpers.chargeTheCard = function(msg,amount,callback){
 };
 
 
-// CURL Example for sending email via mailgun
-/*
-curl  --trace-ascii email.trace --user 'api:Ya9dd35642a3de4f02bc39e18831c7160-4412457b-a89e681e' \
-    https://api.mailgun.net/v3/sandbox123.mailgun.org/messages \
-    -F from='Excited User <mailgun@sandbox123.mailgun.or>' \
-    -F to=artofrunning2015@gmail.com \
-    -F subject='Hello' \
-    -F text='Testing some Mailgun awesomeness!'
-
-*/
 
 helpers.sendEmail = function(email,msg,orderData,callback){
   // Validate parameters
