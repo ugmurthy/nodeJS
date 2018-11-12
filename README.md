@@ -1,6 +1,6 @@
 ##  nodeJS MasterClass
----
-#### Assignment #1
+
+### Assignment #1
 filename : hello.js
 
 Usage: 
@@ -19,10 +19,10 @@ url --header "Content-Type: application/json" \
   http://localhost:3000/hello
 ```
 ---
-#### Assignment #2
+### Assignment #2
 
-API for a pizza-delivery company. Specs: 
-
+### API for a pizza-delivery company: 
+### Requirements:
 1. New users can be created, their information can be edited, and they can be deleted. We should store their name, email address, and street address.
 
 2. Users can log in and log out by creating or destroying a token.
@@ -106,5 +106,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTc2ODAyNDc2XX0=
+eyJoaXN0b3J5IjpbMjYwODk0NzQxXX0=
 -->
