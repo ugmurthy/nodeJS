@@ -85,13 +85,13 @@ one file per menu item will be generated in the `.data/menu` directory
 
 ##### API Specification
 **1. Create new user**
-	 Create `users` record given :  `fullName
+~~~Create `users` record given :  `fullName
 password
 email
 streetAddress
 phone
 tosAgreement` returns Statuscode and Response as below:
- 
+ ~~~
 |Method|URL  |
 |--|--|
 |POST  |/users/  |
@@ -115,7 +115,9 @@ Returns:
 |400|{"error":"Missing required fields or invalid"}|
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
+===
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwMzI3OTMxNjcsMTkzMTcyNDc4Nyw5ND
-c0NTYwODEsMjYwNTA1NTE1XX0=
+eyJoaXN0b3J5IjpbLTczNzQyMTQ3OCwxOTMxNzI0Nzg3LDk0Nz
+Q1NjA4MSwyNjA1MDU1MTVdfQ==
 -->
