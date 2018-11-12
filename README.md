@@ -92,6 +92,10 @@ streetAddress
 phone
 tosAgreement` returns Statuscode and Response as below:
  
+|  |  |  |
+|--|--|--|
+|  |  |  |
+
 |StatusCode  |Response  |
 |--|--|
 |200  |{}  |
@@ -102,6 +106,6 @@ tosAgreement` returns Statuscode and Response as below:
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTkzMTcyNDc4Nyw5NDc0NTYwODEsMjYwNT
-A1NTE1XX0=
+eyJoaXN0b3J5IjpbNzA4NjM2MzYzLDE5MzE3MjQ3ODcsOTQ3ND
+U2MDgxLDI2MDUwNTUxNV19
 -->
