@@ -43,9 +43,9 @@ url --header "Content-Type: application/json" \
 The API will enable CRUD for the following entities: 
 1. `users`  to keep user records, 
 2. `tokens`to ensure authenticated users are allowed to act on their own data 
-3. `menu`, 
-4. `cart`and
-5. `orders`
+3. `menu` contains what is is available for ordering, 
+4. `cart`is an e-cart for populating menu items
+5. `orders`contains details of what to order
 ##### menu.json
 
 menu.json was generated using www.json-generator.com with the following template
@@ -110,5 +110,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTU2NjkxNTQ5MF19
+eyJoaXN0b3J5IjpbLTE5MDI0NDY1NjddfQ==
 -->
