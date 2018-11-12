@@ -84,7 +84,12 @@ execute the following command:
 one file per menu item will be generated in the `.data/menu` directory
 
 ##### API Specification
+1. Create 
+|  |  |
+|--|--|
+|  |  |
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTQ3NDU2MDgxLDI2MDUwNTUxNV19
+eyJoaXN0b3J5IjpbLTczMzQ5MTE2MCw5NDc0NTYwODEsMjYwNT
+A1NTE1XX0=
 -->
