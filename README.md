@@ -47,7 +47,9 @@ The API will enable CRUD for the following entities:
 4. `cart`is an e-cart for populating menu items
 5. `orders`contains details of what to order
 
-All of above are json files and the structure are available [here](https://github.com/ugmurthy/nodejs/blob/master/assignment_2/structures.json)
+All of above are json files and the structure are available [here] (https://github.com/ugmurthy/nodejs/blob/master/assignment_2/structures.json). All of these files reside in `.data` directory 
+
+`data.js` i
 ##### menu.json
 
 menu.json was generated using www.json-generator.com with the following template
@@ -112,5 +114,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE1MzA0ODQ5OF19
+eyJoaXN0b3J5IjpbMTYyNDIxOTg1Ml19
 -->
