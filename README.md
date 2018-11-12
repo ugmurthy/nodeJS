@@ -94,9 +94,10 @@ tosAgreement` returns Statuscode and Response as below:
  
 |Method|URL  |
 |--|--|
-|  |  |
+|POST  |/users/  |
 
-|  |  |  |
+
+| Type |Mandatory params  |  |
 |--|--|--|
 |  |  |  |
 
@@ -110,6 +111,6 @@ tosAgreement` returns Statuscode and Response as below:
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTIxMjMwNTg2MzYsMTkzMTcyNDc4Nyw5ND
-c0NTYwODEsMjYwNTA1NTE1XX0=
+eyJoaXN0b3J5IjpbMTA3MzI5MDU1MSwxOTMxNzI0Nzg3LDk0Nz
+Q1NjA4MSwyNjA1MDU1MTVdfQ==
 -->
