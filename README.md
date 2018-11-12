@@ -114,11 +114,35 @@ Returns:
 |400|{"error":"Missing required fields or invalid"}|
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
-|  |  |
-|200  |{<br>"fullName": “xxxxx”,<br>"email": "yyy@xx.co.in",<br>"streetAddress": “ string with address”<br>"phone":   “9999999999”<br>}
+
+
+**2. Get user details**
+~~~
+Get `users` record given :  phone, and token
+returns Statuscode and Response as below:
+ ~~~
+|Method|URL  |
 |--|--|
+|GET  |/users/?phone=9999999999  |
+---
+
+| Type |Mandatory params|Value  |
+|--|--|--|
+| HEADER | token |String(20)  |
+| QUERYSTRING | phone |String(10)  |
+
+---
+Returns:
+|StatusCode  |Response  |
+|--|--|
+|200  |{<br>"fullName": “xxxxx”,<br>"email": "yyy@xx.co.in",<br>"streetAddress": “ string with address”<br>"phone":   “9999999999”<br>}|
+|400|{"error":"Missing or invalid field/s"}|
+|403|{"error":"unauthorised request - rejected"}|
+|404|{}|
+|500|{"error":"Something went wrong. Please try again later."}|
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjY2NTMwMTU5LC0xMDYyMDI1MDUsLTE2MD
-gxMTMxNDgsMTkzMTcyNDc4Nyw5NDc0NTYwODEsMjYwNTA1NTE1
-XX0=
+eyJoaXN0b3J5IjpbLTE5Nzc4MTEyNjUsMjY2NTMwMTU5LC0xMD
+YyMDI1MDUsLTE2MDgxMTMxNDgsMTkzMTcyNDc4Nyw5NDc0NTYw
+ODEsMjYwNTA1NTE1XX0=
 -->
