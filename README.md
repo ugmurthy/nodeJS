@@ -42,7 +42,7 @@ url --header "Content-Type: application/json" \
 ##### Database
 The API will enable CRUD for the following entities: 
 1. `users`  to keep user records, 
-2. `tokens`, 
+2. `tokens`to ensure authenticated users are allowed to act on their own data 
 3. `menu`, 
 4. `cart`and
 5. `orders`
@@ -110,5 +110,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2MDg2MzY1MDRdfQ==
+eyJoaXN0b3J5IjpbMTU2NjkxNTQ5MF19
 -->
