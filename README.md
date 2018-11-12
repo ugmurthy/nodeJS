@@ -51,7 +51,8 @@ All of above are json files and the structure are available [here] (https://gith
 
 `data.js` implements all basic routines to `create, read, write, update, delete and list` files
 
-`menu.json
+###### menu
+The menu items were created using `menugen.js` which create all menu items. The menu items were generated using 
 ##### API
 ##### menu.json
 
@@ -117,5 +118,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTExMDc4MTIxMDddfQ==
+eyJoaXN0b3J5IjpbLTE2ODAwNDQ0NzldfQ==
 -->
