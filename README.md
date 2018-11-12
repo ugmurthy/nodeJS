@@ -4,7 +4,9 @@
 	2. Assignment #2
 		API for a pizza-delivery company:
 		Requirments
-		
+			Database
+				menugenerator
+			API Specification
 		
 ### Assignment #1
 filename : hello.js
@@ -116,5 +118,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTk4NDIxNDMwNV19
+eyJoaXN0b3J5IjpbMjYwNTA1NTE1XX0=
 -->
