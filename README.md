@@ -100,10 +100,8 @@ tosAgreement` returns Statuscode and Response as below:
 |400|{"error":"Invalid password - should be atleast 8 chars"}|
 |400|{"error":"Missing required fields or invalid"}|
 |500|{"error":"Could not create new user"}|
-|500
-
-{"error":"Could not create new user- NULL Hash"}
+|500|{"error":"Could not create new user- NULL Hash"}|
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEwMTM5NzA2NSw5NDc0NTYwODEsMjYwNT
+eyJoaXN0b3J5IjpbMTkzMTcyNDc4Nyw5NDc0NTYwODEsMjYwNT
 A1NTE1XX0=
 -->
