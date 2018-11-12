@@ -55,9 +55,40 @@ Returns:
 |404|{}|
 |500|{"error":"Something went wrong. Please try again later."}|
 
+**3. Update user**
+~~~
+Update `users` record given :  token and list of user fields to update (minimum one field need to be given)
+returns Statuscode and Response as below:
+ ~~~
+|Method|URL  |
+|--|--|
+|POST  |/users/  |
+---
+| Type |Mandatory params|Value  |
+|--|--|--|
+| HEADER | token |String(20) |
+| JSON Payload | phone |String(10)  |
+
+| Type |Optional params|Value  |
+|--|--|--|
+| JSON Payload | fullName |String  |
+| JSON Payload | streeAddress |String  |
+| JSON Payload | email |String  |
+| JSON Payload | tosAgreement |Boolean  |
+---
+Returns:
+|StatusCode  |Response  |
+|--|--|
+|200  |{<br>"fullName": “xxxxx”,<br>"email": "yyy@xx.co.in",<br>"streetAddress": “ string with address”<br>"phone":   “9999999999”<br>}|
+|400|{"error":"Missing or invalid field"}|
+|400|{"error":"Nothing to update"}|
+|400|{"error":"User not found"}|
+|403|{"error":"unauthorised request - rejected"}|
+|500|{"error":"Could not update user"}|
+---
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTE1NzM3MzY4MSwyNjY1MzAxNTksLTEwNj
-IwMjUwNSwtMTYwODExMzE0OCwxOTMxNzI0Nzg3LDk0NzQ1NjA4
-MSwyNjA1MDU1MTVdfQ==
+eyJoaXN0b3J5IjpbNzU1MjIyODUyLDExNTczNzM2ODEsMjY2NT
+MwMTU5LC0xMDYyMDI1MDUsLTE2MDgxMTMxNDgsMTkzMTcyNDc4
+Nyw5NDc0NTYwODEsMjYwNTA1NTE1XX0=
 -->
