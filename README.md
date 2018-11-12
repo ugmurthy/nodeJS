@@ -3,11 +3,11 @@
 	1. Assignment #1
 	2. Assignment #2
 		API for a pizza-delivery company:
-		Requirments
+		Specification
 			Database
 				menugenerator
 			API Specification
-		
+---		
 ### Assignment #1
 filename : hello.js
 
@@ -42,8 +42,6 @@ url --header "Content-Type: application/json" \
 5. A logged-in user should be able to create an order. You should integrate with the Sandbox of Stripe.com to accept their payment. Note: Use the stripe sandbox for your testing. Follow this link and click on the "tokens" tab to see the fake tokens you can use server-side to confirm the integration is working: https://stripe.com/docs/testing#cards
 
 6. When an order is placed, you should email the user a receipt. You should integrate with the sandbox of Mailgun.com for this. Note: Every Mailgun account comes with a sandbox email account domain (whatever@sandbox123.mailgun.org) that you can send from by default. So, there's no need to setup any DNS for your domain for this task https://documentation.mailgun.com/en/latest/faqs.html#how-do-i-pick-a-domain-name-for-my-mailgun-account
-
-
 ---
 
 #### Specifications:
@@ -59,7 +57,7 @@ All of above are json files and the structure are available [here] (https://gith
 
 `data.js` implements all basic routines to `create, read, write, update, delete and list` files
 
-###### menu
+###### menugenerator
 The menu items were created using `menugen.js` which create all menu items. The menu items were generated using [www.json-generator.com](http://www.json-generator.com/) with the following template 
 ```
 [
@@ -85,38 +83,7 @@ execute the following command:
 
 one file per menu item will be generated in the `.data/menu` directory
 
----
-
-##### Cart
-
-the following CART structure contains reference to USER by phone, it has complete info on menuitems to place and order and calculate total amount. 
-Assumption: 
-- One user has only one CART and is indicated by reference to cartID in the USER record.
-```
-{
-    "cartId": "5be10cff6278f1eebbf1587f",
-    "phone": "9425903782",
-    "lineItems": [
-      {
-        "id": "0",
-        "menuIndex": 0,
-        "name": "Pizza est laborum",
-        "size": "12 inch",
-        "price": 105.79,
-        "Quantity": 1
-      },
-      {
-        "id": "1",
-        "menuIndex": 1,
-        "name": "Pizza dolor aute",
-        "size": "8 inch",
-        "price": 134.91,
-        "Quantity": 3
-      }
-    ]
-  }
-```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjYwNTA1NTE1XX0=
+eyJoaXN0b3J5IjpbMjA2OTU1ODAzMywyNjA1MDU1MTVdfQ==
 -->
