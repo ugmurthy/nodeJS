@@ -3,11 +3,118 @@
 //dependencies
 var _data = require('./data'); 
 var helpers = require('./helpers');
-var config = require('../https/config');
+var config = require('./config');
 var util = require('util');
 var debug = util.debuglog('handlers');
 // Define all the handlers
 var handlers = {};
+
+// SEND EMAIL : 
+
+handlers.sendmail = function(data, callback) {
+	var acceptableMethods = ['post'];
+	if (acceptableMethods.indexOf(data.method) > -1){
+		handlers._sendmail[data.method](data,callback);
+	} else {
+		// 405 is method not acceptable
+		callback(405);
+	}
+};
+
+handlers._sendmail = {};
+
+handlers._sendmail.post = function(data,callback) {
+	// check who is asking by checking token in headers
+	// MADATORY fileds
+	var token = typeof(data.headers.token) == 'string' 
+		&& data.headers.token.length == 20
+			 ? data.headers.token 
+			 : false;
+	var orderId = typeof(data.payload.orderId) == 'string' ? data.payload.orderId : false;
+
+	// OPTIONAL fields
+	var message = typeof(data.payload.message) == 'string' 
+		&& data.payload.message.trim().length > 0 
+			? data.payload.message.trim()
+			: false;
+
+	if (token && orderId ) {
+		// read order and get phone
+		_data.read('orders',orderId,function(err,orderData){
+			if (!err && orderData) {
+				var userPhone = orderData.cart.phone;
+				handlers._tokens.verifyToken(token, orderData.cart.phone, function(tokenIsValid){
+					if (tokenIsValid) {
+						// read user record
+						_data.read('users',userPhone,function(err, userData){
+							if (!err && userData) {
+								// prepare emailData
+								var emailData = {}
+								// all good - lets craft the email message
+								if (!message) {
+									message = 'Dear '+userData.fullName
+											+',\n'
+											+'Thank you for your order number : ' + orderId
+											+' for Pizzas.\n'
+											+'Pizzas will be delivered in the next 90 minutes.\n'
+											+'\n'
+											+'Enjoy!\n'
+											+'\n'
+											+'Look forwards to your feeback\n'
+											+'\n'
+											+'Regards\n' 
+											+'PIRPLE Pizzas\n'
+								}
+
+								if (config.emailAutomation.name == 'mailjet') {
+									emailData['Text-part'] = message;
+									emailData['To'] = userData.email
+									emailData['Subject'] = "Order Confirmation Order # "+orderId;
+									emailData['FromEmail']='murthy.udupa@muvesolutions.in'
+									emailData['FromName']='MUVE Solutions LLP'
+								}
+
+								if (config.emailAutomation.name == 'mailgun') {
+									emailData['text'] = message;
+									emailData['to'] = userData.email
+									emailData['subject'] = "Order Confirmation Order # "+orderId;
+									emailData['from']='murthy.udupa@samples.mailgun.org'
+									
+								}								
+
+
+								helpers.sendEmail(emailData,function(err){
+									debug("statusCode: ",err);
+									if (!err) {
+										callback(200)
+									} else {
+
+										callback(400,{"error":"SENDMAIL unsuccessful statusCode: "+err});
+									}
+								});
+							} else {
+								callback(400,{"error":"user not found"})
+							}
+						});
+							
+
+					} else {
+						callback(403,{"error":"unauthorised request - rejected"})
+					}
+				})
+			} else {
+				callback(400,{"error":"order not found"});
+			}
+		});
+	} else {
+		callback(400,{"error":"missing or invalid field/s"})
+	}
+};
+
+
+
+// SENDMAIL ENDS
+
 
 
 // PAY for ORDER
@@ -30,11 +137,11 @@ handlers._pay.post = function(data, callback) {
 			 ? data.headers.token 
 			 : false;
 
-	// preformed message based on order ID
 	var message = typeof(data.payload.message) == 'string' 
 		&& data.payload.message.trim().length > 0 
 			? data.payload.message.trim()
 			: false;
+
 	// amount is dollars - needs to be converted to cents
 	var amountInCents = typeof(data.payload.amount) == 'number' 
 		&& data.payload.amount > 0
@@ -46,34 +153,44 @@ handlers._pay.post = function(data, callback) {
 	debug('OrderId',orderId);
 
 	// not checking for amountInCents purposefully - if false use orderAmount
-	if (token && message  && orderId ) {
+	if (token && orderId ) {
 		// read order and get phone
 		_data.read('orders',orderId,function(err,orderData){
 			if (!err && orderData) {
+				// check the optionals and if not given update them to relevant values
+				// set amountInCents to orderAmount *100
 				if (!amountInCents) {
 					amountInCents = Math.floor(orderData.orderAmount * 100)
 				}
-				userPhone = orderData.cart.phone;
+				// set message to a string based on orderId
+				if (!message) {
+					message = "Payment for Order : "+orderId;
+				}
+				var userPhone = orderData.cart.phone;
 				handlers._tokens.verifyToken(token, orderData.cart.phone, function(tokenIsValid){
 					if (tokenIsValid) {
-						// make payment
-						helpers.chargeTheCard(message, amountInCents,function(err){
-							if (!err) {
-								// update payment status
-								orderData.payment.status = true;
-								// store orderData
-								_data.update('orders',orderId,orderData,function(err){
-									if (!err) {
-										callback(200,{'paid':amountInCents/100,'status':'SUCCESS'});
-									} else {
-										callback(400,{'error':'Could not update order payment flag to paid','paid':amountInCents/100,'status':'SUCCESS'})
-									}
-								});
-							} else {
-								// failed payment
-								callback(400,{'error':'unsuccessful payment'});
-							}
-						});
+						// make payment if not already made
+						if (!orderData.payment.status)	{
+							helpers.chargeTheCard(message, amountInCents,function(err){
+								if (!err) {
+									// update payment status
+									orderData.payment.status = amountInCents/100;
+									// store orderData
+									_data.update('orders',orderId,orderData,function(err){
+										if (!err) {
+											callback(200,{'paid':orderData.payment.status,'status':'SUCCESS'});
+										} else {
+											callback(400,{'error':'Could not update order payment flag to paid','paid':amountInCents/100,'status':'SUCCESS'})
+										}
+									});
+								} else {
+									// failed payment
+									callback(400,{'error':'unsuccessful payment'});
+								}
+							});
+						} else {
+							callback(400,{'error':'This order has been already been paid for'});
+						}
 					} else {
 						callback(403,{"error":"unauthorised request - rejected"});
 					}
@@ -91,7 +208,7 @@ handlers._pay.post = function(data, callback) {
 
 // ORDER handler
 handlers.orders = function(data, callback) {
-	var acceptableMethods = ['post','get','put','delete'];
+	var acceptableMethods = ['post','put','delete'];
 	if (acceptableMethods.indexOf(data.method) > -1){
 		handlers._orders[data.method](data,callback);
 	} else {
@@ -218,10 +335,7 @@ handlers._orders.post = function(data, callback) {
 
 };
 
-// orders - GET
-handlers._orders.get = function(data, callback) {
-callback(false);
-};
+
 
 // orders - PUT
 handlers._orders.put = function(data, callback) {
@@ -313,8 +427,53 @@ handlers._orders.put = function(data, callback) {
 
 // orders - DELETE
 handlers._orders.delete = function(data, callback) {
-callback(false);
+	// who is asking?
+	var phone = typeof(data.queryStringObject.phone) == 'string' &&
+			data.queryStringObject.phone.trim().length == 10 
+			? data.queryStringObject.phone.trim()
+			: false ;
+
+	var orderId = typeof(data.payload.orderId) == 'string' &&
+			data.payload.orderId.trim().length == 20 
+			? data.payload.orderId.trim()
+			: false ;
+	
+
+	if (phone) {
+		// ensure the token corresponds to the user requesting cart
+		var token = typeof(data.headers.token) == 'string' ? data.headers.token : false;
+		handlers._tokens.verifyToken(token, phone, function(tokenIsValid) {
+			if (tokenIsValid) {
+				// deleorders only if payment status is false
+				_data.read('orders',orderId,function(err,orderData){
+					if (!err && orderData) {
+						if (!orderData.payment.status) {
+							// delete order
+							_data.delete('orders',orderId,function(err){
+								if (!err ) {
+										callback(200);
+									} else {
+										callback(400,{'error':'order cannot be deleted'})
+									}	
+							});
+						} else {
+							callback(400,{'error':'Order is already paid for - cannot delete'})
+						}
+					} else {
+						callback(400,{'error':'could not find order'});
+					}
+				});
+				
+			} else {
+				callback(403,{"error":"unauthorised request - rejected"})
+			}
+		});
+	} else {
+		callback(400,{"error":"Missing or invalid field"})
+	}
+
 };
+
 
 
 // ORDERS END
@@ -796,6 +955,7 @@ handlers._menu.generate = function(menuItems,callback) {
 
 // Users
 handlers.users = function(data, callback) {
+	console.log('Handler: users')
 	var acceptableMethods = ['post', 'get', 'put','delete'];
 	if (acceptableMethods.indexOf(data.method) > -1){
 		handlers._users[data.method](data,callback);
@@ -813,6 +973,8 @@ handlers._users = {};
 // optional data = None
 handlers._users.post = function(data,callback) {
 	// check all required field are filled out
+	console.log("Handler: _user.post");
+
 	var fullName 
 		= typeof(data.payload.fullName) == 'string' && data.payload.fullName.trim().length > 0 
 		   		? data.payload.fullName.trim() 
@@ -823,13 +985,21 @@ handlers._users.post = function(data,callback) {
 		   		? data.payload.streetAddress.trim() 
 		   		: false;
 
+
+	   		
 	// validate email address format	   		
 	var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-	result = data.payload.email.match(regex);
-	var email = typeof(result) == 'object' 
-		&& result != null 
-			? result[0] 
-			: false 
+	if (typeof(data.payload.email) == 'string') {
+		var regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+		result = data.payload.email.match(regex);
+		var email = typeof(result) == 'object' 
+			&& result != null 
+				? result[0] 
+				: false 
+	} else {
+		// spare match from giving an error
+		email = false;
+	}
 		   		
 	var phone 
 		= typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 
@@ -837,14 +1007,15 @@ handlers._users.post = function(data,callback) {
 		   		: false
 
 	var password 
-		= typeof(data.payload.password) == 'string' && data.payload.password.trim().length >= 8 
+		= typeof(data.payload.password) == 'string' && data.payload.password.trim().length > 7 
 		   		? data.payload.password.trim() 
-		   		: false
+		   		: false;
 
 	var tosAgreement 
 		= typeof(data.payload.tosAgreement) == 'boolean' && data.payload.tosAgreement  == true
 		   		? true
-		   		: false
+		   		: false;
+	
 
 	// make sure mandatory fields exisit
 	if (fullName &&  email && phone && password && streetAddress && tosAgreement) {
@@ -889,16 +1060,9 @@ handlers._users.post = function(data,callback) {
 			}
 		});
 	}	else {
-		if (password.length < 8) {
+		if (data.payload.password.trim().length < 8) {
 			callback(400,{"error":"Invalid password - should be atleast 8 chars"})
 		} else {
-			debug(helpers.red,"MISSING OR INVALID FIELD");
-			debug(helpers.red,fullName);
-			debug(helpers.red,email);
-			debug(helpers.red,password);
-			debug(helpers.red,streetAddress);
-			debug(helpers.red,phone);
-			debug(helpers.red,String(tosAgreement));
 			callback(400,{"error":"Missing required fields or invalid"})
 		}
 	}  
@@ -974,6 +1138,7 @@ handlers._users.put = function(data,callback) {
 		// spare match from giving an error
 		email = false;
 	}
+
 
 	var phone 
 		= typeof(data.payload.phone) == 'string' && data.payload.phone.trim().length == 10 

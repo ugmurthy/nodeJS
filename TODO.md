@@ -101,4 +101,10 @@ Assignment_2
 	- POST /pay/ need to include token and validate it - done
 	- chase MAILGUN
 9.0 SECURITY Issues : had to delete GITHUB Repository as my MAILGUN secret key was in Github config.sys. Config.sys location changed to https and recreated github repo
+9.1 switched to MAILJET - API implemented and tested. : 5 hours : 10/Nov
+9.2 API keys are now environment variables
+9.3 config.js is back to the lib directory
+9.4 implement both mailgun and mailjet  for sending email with an ability to chose either
+    using the NODE_EMAIL env variable - default is mailgun
+
 

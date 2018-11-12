@@ -2,9 +2,11 @@
 
 // dependencies
 var crypto = require('crypto');
-var config = require('../https/config');
+var config = require('./config');
 var querystring = require('querystring');
 var https = require('https');
+var util = require('util');
+var debug = util.debuglog('helpers');
 
 // container or all the helpers
 var helpers = {};
@@ -53,63 +55,6 @@ helpers.createRandomString = function(strLength) {
 		return false;
 	}
 }
-
-// send an SMS message via Twilio
-helpers.sendTwilioSms = function(phone,msg,callback){
-  // Validate parameters
-  phone = typeof(phone) == 'string' && phone.trim().length == 10 ? phone.trim() : false;
-  msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 1600 ? msg.trim() : false;
-  if(phone && msg){
-
-    // Configure the request payload
-    var payload = {
-      'From' : config.twilio.fromPhone,
-      'To' : '+1'+phone,
-      'Body' : msg
-    };
-    var stringPayload = querystring.stringify(payload);
-
-
-    // Configure the request details
-    var requestDetails = {
-      'protocol' : 'https:',
-      'hostname' : 'api.twilio.com',
-      'method' : 'POST',
-      'path' : '/2010-04-01/Accounts/'+config.twilio.accountSid+'/Messages.json',
-      'auth' : config.twilio.accountSid+':'+config.twilio.authToken,
-      'headers' : {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(stringPayload)
-      }
-    };
-
-    // Instantiate the request object
-    var req = https.request(requestDetails,function(res){
-        // Grab the status of the sent request
-        var status =  res.statusCode;
-        // Callback successfully if the request went through
-        if(status == 200 || status == 201){
-          callback(false);
-        } else {
-          callback('Status code returned was '+status);
-        }
-    });
-
-    // Bind to the error event so it doesn't get thrown
-    req.on('error',function(e){
-      callback(e);
-    });
-
-    // Add the payload
-    req.write(stringPayload);
-
-    // End the request
-    req.end();
-
-  } else {
-    callback('Given parameters were missing or invalid');
-  }
-};
 
 
 helpers.chargeTheCard = function(msg,amount,callback){
@@ -172,64 +117,94 @@ helpers.chargeTheCard = function(msg,amount,callback){
 
 
 
-helpers.sendEmail = function(email,msg,orderData,callback){
-  // Validate parameters
-  email = typeof(email) == 'string' ? email : email;
-  orderData = typeof(orderData) == 'object' ? orderData : false;
-  msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 100 ? msg.trim() : false;
-  if(email && orderData && msg){
+helpers.sendEmail = function(emailData,callback){
+  // Validate parameter
+  
+  var payload = typeof(emailData) == 'object' ? emailData : false; 
 
-    // Configure the request payload
-    var payload = {
-      'from':'mailgun <mailgun@sandbox123.mailgun.or>',
-      'to': email,
-      'message': msg,
-      'subject':'Your order nunumber : '+orderData.orderId
-    };
-    
-    var stringPayload = querystring.stringify(payload);
+  if(payload){
 
+    // Get mail automation details
+    var user = process.env[config.emailAutomation.user]
+    var secret =process.env[config.emailAutomation.secretKey]
+    var emailAutomation = config.emailAutomation.name
+    // form basic auth string as base64 encoded
+    var auth='Basic '+new Buffer(user+':'+secret).toString('base64')
 
-    // Configure the request details
-    var requestDetails = {
-      'protocol':'https:',
-      'hostname':'api.mailgun.net',
-      'method':'POST',
-      'path': '/v3/sandbox123.mailgun.org/messages',
-      'auth': config.mailgun.api,
-      'headers': {
-        'Content-Type' : 'application/x-www-form-urlencoded',
-        'Content-Length': Buffer.byteLength(stringPayload)
-      }
-    };
-
-    // Instantiate the request object
-    var req = https.request(requestDetails,function(res){
-        // Grab the status of the sent request
-        var status =  res.statusCode;
-        // Callback successfully if the request went through
-        if(status == 200 || status == 201){
-          callback(false);
-        } else {
-          callback('Status code returned was '+status);
+    if (user && secret && emailAutomation) {
+        
+        // check which mail automation are we using and prepare request details
+        if (emailAutomation == 'mailjet') {
+          // for MAILJET
+          var stringPayload = JSON.stringify(payload);
+          var requestDetails = {
+            'protocol':'https:',
+            'hostname':'api.mailjet.com',
+            'method':'POST',
+            'path': '/v3/send',
+            'headers': {
+              'Content-Type' : 'application/json',
+              'Content-Length': Buffer.byteLength(stringPayload),
+              'Authorization' : auth
+            }
+          } 
         }
-    });
 
-    // Bind to the error event so it doesn't get thrown
-    req.on('error',function(e){
-      callback(e);
-    });
+        if (emailAutomation == 'mailgun') {
+          // for MAILGUN
+          var stringPayload = querystring.stringify(payload);
 
-    // Add the payload
-    req.write(stringPayload);
+          var requestDetails = {
+            'protocol':'https:',
+            'hostname':'api.mailgun.net',
+            'method':'POST',
+            'path': '/v3/sandbox0862e159ec674343808d4d883af0bbaf.mailgun.org/messages',
+            'headers': {
+              'Content-Type' : 'application/x-www-form-urlencoded',
+              'Content-Length': Buffer.byteLength(stringPayload),
+              'Authorization' : auth
+            }
+          };
 
-    // End the request
-    req.end();
+        }
 
+        // Instantiate the request object
+        var req = https.request(requestDetails,function(res){
+            // Grab the status of the sent request
+            var status =  res.statusCode;
+            // Callback successfully if the request went through
+            if(status == 200 || status == 201){
+              
+              callback(false);
+            } else {
+              
+              callback('Status code returned was '+status);
+            }
+        });
+
+        // Bind to the error event so it doesn't get thrown
+        req.on('error',function(e){
+          callback(e);
+        });
+
+        // Add the payload
+        req.write(stringPayload);
+
+        // End the request
+        req.end();
+          
+    } else {
+      console.log(user,secret,emailAutomation);
+      // API keys missing or mailautomation not specified
+      callback("API keys not available or mail automation missing")
+    }
   } else {
+
     callback('Given parameters were missing or invalid');
-  }
+  }  
+    
 };
+
 
 
 

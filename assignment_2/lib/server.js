@@ -5,7 +5,7 @@ var http = require('http');
 var https = require('https');
 var url = require('url');
 var StringDecoder = require('string_decoder').StringDecoder;
-var config = require('../https/config');
+var config = require('./config');
 var fs = require('fs');
 var handlers = require('./handlers');
 var helpers = require('./helpers');
@@ -112,7 +112,8 @@ server.router = {
   'menu': handlers.menu,
   'cart': handlers.cart,
   'orders':handlers.orders,
-  'pay':handlers.pay
+  'pay':handlers.pay,
+  'sendmail':handlers.sendmail
 };
 
 // init script
