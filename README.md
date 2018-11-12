@@ -115,9 +115,11 @@ Returns:
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
 |  |  |
-|200  |{"fullName": “xxxxx”, "email": "yyy@xx.co.in", "streetAddress": “ string with address”, "phone":   “9999999999” }|
+|200  |{<br>"fullName": “xxxxx”,<br>"email": "yyy@xx.co.in",<br>"streetAddress": “ string with address”<br>"phone":   “9999999999”<br>
+}
 |--|--|
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEwNjIwMjUwNSwtMTYwODExMzE0OCwxOT
-MxNzI0Nzg3LDk0NzQ1NjA4MSwyNjA1MDU1MTVdfQ==
+eyJoaXN0b3J5IjpbMjA2NTYxMzU5NywtMTA2MjAyNTA1LC0xNj
+A4MTEzMTQ4LDE5MzE3MjQ3ODcsOTQ3NDU2MDgxLDI2MDUwNTUx
+NV19
 -->
