@@ -93,10 +93,27 @@ phone
 tosAgreement` returns Statuscode and Response as below:
  
 |StatusCode  |Response  |
-|200|{}|
-|  |  |
+|--|--|
+|200  |{}  |
+|200  |{}  |
+|400|{"error":"Invalid fullName or it already exists"}
 
+400
+
+{"error":"Invalid password - should be atleast 8 chars"}
+
+400
+
+{"error":"Missing required fields or invalid"}
+
+500
+
+{"error":"Could not create new user"}
+
+500
+
+{"error":"Could not create new user- NULL Hash"}
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk0MjU0ODAwMiw5NDc0NTYwODEsMjYwNT
-A1NTE1XX0=
+eyJoaXN0b3J5IjpbLTE5Njk4MTAzNTUsOTQ3NDU2MDgxLDI2MD
+UwNTUxNV19
 -->
