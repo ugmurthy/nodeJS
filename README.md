@@ -114,8 +114,15 @@ Returns:
 |400|{"error":"Missing required fields or invalid"}|
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
-
+|  |  |
+|200  |{
+    "fullName": “xxxxx”,
+    "email": "yyy@xx.co.in",
+    "streetAddress": “ string with address”
+    "phone":   “9999999999”
+}|
+|--|--|
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2MDgxMTMxNDgsMTkzMTcyNDc4Nyw5ND
-c0NTYwODEsMjYwNTA1NTE1XX0=
+eyJoaXN0b3J5IjpbMzQ4MTA2MzE3LC0xNjA4MTEzMTQ4LDE5Mz
+E3MjQ3ODcsOTQ3NDU2MDgxLDI2MDUwNTUxNV19
 -->
