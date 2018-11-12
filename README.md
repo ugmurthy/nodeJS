@@ -84,7 +84,7 @@ execute the following command:
 one file per menu item will be generated in the `.data/menu` directory
 
 ##### API Specification
-**Create new user**
+**1. Create new user**
 	 Create `users` record given :  `fullName
 password
 email
@@ -105,7 +105,7 @@ tosAgreement` returns Statuscode and Response as below:
 | JSON Payload | password |String  |
 | JSON Payload | phone |String(10)  |
 ---
-
+Returns:
 |StatusCode  |Response  |
 |--|--|
 |200  |{}  |
@@ -116,6 +116,6 @@ tosAgreement` returns Statuscode and Response as below:
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTI4OTUwNjA1NywxOTMxNzI0Nzg3LDk0Nz
-Q1NjA4MSwyNjA1MDU1MTVdfQ==
+eyJoaXN0b3J5IjpbLTEwMzI3OTMxNjcsMTkzMTcyNDc4Nyw5ND
+c0NTYwODEsMjYwNTA1NTE1XX0=
 -->
