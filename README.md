@@ -85,12 +85,10 @@ one file per menu item will be generated in the `.data/menu` directory
 
 ##### API Specification
 **1. Create new user**
-~~~Create `users` record given :  `fullName
-password
-email
-streetAddress
-phone
-tosAgreement` returns Statuscode and Response as below:
+~~~
+Create `users` record given :  fullName, password
+email ,streetAddress ,phone and tosAgreement  
+returns Statuscode and Response as below:
  ~~~
 |Method|URL  |
 |--|--|
@@ -118,6 +116,6 @@ Returns:
 ===
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTczNzQyMTQ3OCwxOTMxNzI0Nzg3LDk0Nz
+eyJoaXN0b3J5IjpbLTUyMDkzMTAwNywxOTMxNzI0Nzg3LDk0Nz
 Q1NjA4MSwyNjA1MDU1MTVdfQ==
 -->
