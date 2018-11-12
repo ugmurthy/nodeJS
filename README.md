@@ -49,7 +49,10 @@ The API will enable CRUD for the following entities:
 
 All of above are json files and the structure are available [here] (https://github.com/ugmurthy/nodejs/blob/master/assignment_2/structures.json). All of these files reside in `.data` directory 
 
-`data.js` i
+`data.js` implements all basic routines to `create, read, write, update, delete and list` files
+
+`menu.json
+##### API
 ##### menu.json
 
 menu.json was generated using www.json-generator.com with the following template
@@ -114,5 +117,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTYyNDIxOTg1Ml19
+eyJoaXN0b3J5IjpbLTExMDc4MTIxMDddfQ==
 -->
