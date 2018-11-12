@@ -84,8 +84,8 @@ execute the following command:
 one file per menu item will be generated in the `.data/menu` directory
 
 ##### API Specification
-POST /users/
-Create `users` record given `fullName
+**POST /users/**
+	 Create `users` record given :  `fullName
 password
 email
 streetAddress
@@ -97,6 +97,6 @@ tosAgreement`
 |  |  |
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTEzMjg4MTE5MjksOTQ3NDU2MDgxLDI2MD
-UwNTUxNV19
+eyJoaXN0b3J5IjpbLTYxODU0ODM1LDk0NzQ1NjA4MSwyNjA1MD
+U1MTVdfQ==
 -->
