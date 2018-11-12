@@ -90,13 +90,13 @@ password
 email
 streetAddress
 phone
-tosAgreement`
+tosAgreement` returns Statuscode and Response as below:
  
-|  |  |
-|--|--|
+|StatusCode  |Response  |
+|200|{}|
 |  |  |
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTYxODU0ODM1LDk0NzQ1NjA4MSwyNjA1MD
-U1MTVdfQ==
+eyJoaXN0b3J5IjpbMTk0MjU0ODAwMiw5NDc0NTYwODEsMjYwNT
+A1NTE1XX0=
 -->
