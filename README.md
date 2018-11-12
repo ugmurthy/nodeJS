@@ -1,5 +1,6 @@
 ##  nodeJS MasterClass
-
+### INDEX
+	
 ### Assignment #1
 filename : hello.js
 
@@ -52,12 +53,7 @@ All of above are json files and the structure are available [here] (https://gith
 `data.js` implements all basic routines to `create, read, write, update, delete and list` files
 
 ###### menu
-The menu items were created using `menugen.js` which create all menu items. The menu items were generated using 
-##### API
-##### menu.json
-
-menu.json was generated using www.json-generator.com with the following template
-
+The menu items were created using `menugen.js` which create all menu items. The menu items were generated using [www.json-generator.com](http://www.json-generator.com/) with the following template 
 ```
 [
   '{{repeat(30)}}',
@@ -75,15 +71,12 @@ menu.json was generated using www.json-generator.com with the following template
   }
 ]
 ```
-
 copy paste the generated array containing JSON element to `menugen.js` and
 execute the following command:
 
 `node menugen.js`
 
 one file per menu item will be generated in the `.data/menu` directory
-
-
 
 ---
 
@@ -118,5 +111,5 @@ Assumption:
 ```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE2ODAwNDQ0NzldfQ==
+eyJoaXN0b3J5IjpbLTE0MTk1Mzc3MzhdfQ==
 -->
