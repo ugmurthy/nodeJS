@@ -97,9 +97,14 @@ tosAgreement` returns Statuscode and Response as below:
 |POST  |/users/  |
 
 
-| Type |Mandatory params  |  |
+| Type |Mandatory params|Value  |
 |--|--|--|
-|  |  |  |
+| JSON Payload | fullName |String  |
+| JSON Payload | fullName |String  |
+| JSON Payload | fullName |String  |
+| JSON Payload | fullName |String  |
+| JSON Payload | fullName |String  |
+
 
 |StatusCode  |Response  |
 |--|--|
@@ -111,6 +116,6 @@ tosAgreement` returns Statuscode and Response as below:
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTA3MzI5MDU1MSwxOTMxNzI0Nzg3LDk0Nz
-Q1NjA4MSwyNjA1MDU1MTVdfQ==
+eyJoaXN0b3J5IjpbMzEyNDc5NzQzLDE5MzE3MjQ3ODcsOTQ3ND
+U2MDgxLDI2MDUwNTUxNV19
 -->
