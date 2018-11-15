@@ -6,6 +6,7 @@ returns Statuscode and Response as below:
  ~~~
 
  REQUEST:
+ 
 |Method|URL  |
 |--|--|
 |POST  |/users/  |
@@ -25,7 +26,9 @@ Type| Optional Params |Values
 |  |None|  |
 
 ---
+
 RESPONSE:
+
 |StatusCode  |Response  |
 |--|--|
 |200  |{}  |
@@ -44,6 +47,7 @@ returns Statuscode and Response as below:
  ~~~
 
  REQUEST:
+ 
 |Method|URL  |
 |--|--|
 |GET  |/users/?phone=9999999999  |
