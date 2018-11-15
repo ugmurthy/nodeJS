@@ -10,7 +10,6 @@ returns Statuscode and Response as below:
 |Method|URL  |
 |--|--|
 |POST  |/users/  |
----
 
 | Type |Mandatory params|Value  |
 |--|--|--|
@@ -25,8 +24,6 @@ Type| Optional Params |Values
 |--|--|--|
 |  |None|  |
 
----
-
 RESPONSE:
 
 |StatusCode  |Response  |
@@ -38,6 +35,7 @@ RESPONSE:
 |400|{"error":"Missing required fields or invalid"}|
 |500|{"error":"Could not create new user"}|
 |500|{"error":"Could not create new user- NULL Hash"}|
+
 ---
 
 **2. Get user details**
@@ -51,7 +49,6 @@ returns Statuscode and Response as below:
 |Method|URL  |
 |--|--|
 |GET  |/users/?phone=9999999999  |
----
 
 | Type |Mandatory params|Value  |
 |--|--|--|
@@ -62,8 +59,6 @@ Type| Optional Params |Values
 |--|--|--|
 |  |None|  |
 
----
-
 RESPONSE:
 
 |StatusCode  |Response  |
@@ -73,6 +68,8 @@ RESPONSE:
 |403|{"error":"unauthorised request - rejected"}|
 |404|{}|
 |500|{"error":"Something went wrong. Please try again later."}|
+
+---
 
 **3. Update user**
 ~~~
@@ -85,7 +82,7 @@ returns Statuscode and Response as below:
 |Method|URL  |
 |--|--|
 |POST  |/users/  |
----
+
 | Type |Mandatory params|Value  |
 |--|--|--|
 | HEADER | token |String(20) |
@@ -97,7 +94,6 @@ returns Statuscode and Response as below:
 | JSON Payload | streeAddress |String  |
 | JSON Payload | email |String  |
 | JSON Payload | tosAgreement |Boolean  |
----
 
 RESPONSE:
 
@@ -109,8 +105,8 @@ RESPONSE:
 |400|{"error":"User not found"}|
 |403|{"error":"unauthorised request - rejected"}|
 |500|{"error":"Could not update user"}|
----
 
+---
 
 **4. Delete user**
 ~~~
@@ -123,7 +119,6 @@ returns Statuscode and Response as below:
 |Method|URL  |
 |--|--|
 |DELETE  |/users/?phone=9999999999  |
----
 
 | Type |Mandatory params|Value  |
 |--|--|--|
@@ -133,8 +128,6 @@ returns Statuscode and Response as below:
 Type| Optional Params |Values
 |--|--|--|
 |  |None|  |
-
----
 
 RESPONSE:
 
@@ -147,7 +140,7 @@ RESPONSE:
 |403|{"error":"unauthorised request - rejected"}|
 |500|{"error":"Could not delete user"}|
 
-----
+---
 
 **5. Login**
 ~~~~
@@ -170,8 +163,6 @@ REQUEST:
 Type| Optional Params |Values
 |--|--|--|
 |  |None|  |
-
----
 
 RESPONSE:
 
@@ -202,8 +193,6 @@ REQUEST:
 Type| Optional Params |Values
 |--|--|--|
 |  |None|  |
-
----
 
 RESPONSE:
 
@@ -250,4 +239,5 @@ RESPONSE:
 |400|{"error":"Token Expired! Cannot extend"}|
 |500|{"error":"Could not update token"}|
 
+---
 
