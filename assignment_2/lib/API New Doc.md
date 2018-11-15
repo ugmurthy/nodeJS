@@ -563,6 +563,7 @@ REQUEST:
 RESPONSE:
 
 |Status|Response|
+|--|--|--|
 |200|{'paid':99.99,'status':'SUCCESS'}|
 |400|{'error':'Could not update order payment flag to paid','paid':99.99,'status':'SUCCESS'}|
 |400|{"error":"order not found"}|
