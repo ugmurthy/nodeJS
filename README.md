@@ -79,3 +79,26 @@ one file per menu item will be generated in the `.data/menu` directory
 ##### API Specification
 
 API Specification available [here] (https://github.com/ugmurthy/nodejs/blob/master/assignment_2/lib/API_Specification.md)
+
+##### USAGE instructions
+
+`node index.js`
+
+Notes:
+
+Mandatory environment varialbles
+
+  If `NODE_EMAIL` not specified then
+```
+    set MAILGUN_USER=api
+    set MAILGUN_KEY=secret_key
+```
+  if `NODE_EMAIL` is set to 'mailjet'
+```
+    set MJ_APIKEY_PUBLIC=public_key
+    set MJ_APIKEY_PRIVATE=secret_key
+```
+for DEBUG messages user:
+
+`NODE_ENV=helpers,server,handler node index.js`
+
