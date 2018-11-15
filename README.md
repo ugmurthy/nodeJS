@@ -1,12 +1,4 @@
 ##  nodeJS MasterClass
-### INDEX
-	1. Assignment #1
-	2. Assignment #2
-		API for a pizza-delivery company:
-		Specification
-			Database
-				menugenerator
-			API Specification
 ---		
 ### Assignment #1
 filename : hello.js
@@ -30,7 +22,7 @@ url --header "Content-Type: application/json" \
 ### Assignment #2
 
 ### API for a pizza-delivery company: 
-### Requirements:
+### Requirements given:
 1. New users can be created, their information can be edited, and they can be deleted. We should store their name, email address, and street address.
 
 2. Users can log in and log out by creating or destroying a token.
@@ -45,6 +37,7 @@ url --header "Content-Type: application/json" \
 ---
 
 #### Specifications:
+
 ##### Database
 The API will enable CRUD for the following entities: 
 1. `users`  to keep user records, 
@@ -53,7 +46,7 @@ The API will enable CRUD for the following entities:
 4. `cart`is an e-cart for populating menu items
 5. `orders`contains details of what to order
 
-All of above are json files and the structure are available [here] (https://github.com/ugmurthy/nodejs/blob/master/assignment_2/structures.json). All of these files reside in `.data` directory 
+All of above are json files and the structure are available [here] (https://github.com/ugmurthy/nodejs/blob/master/assignment_2/structures.json). All of these files reside in directories under `.data` directory 
 
 `data.js` implements all basic routines to `create, read, write, update, delete and list` files
 
@@ -84,65 +77,5 @@ execute the following command:
 one file per menu item will be generated in the `.data/menu` directory
 
 ##### API Specification
-**1. Create new user**
-~~~
-Create `users` record given :  fullName, password
-email ,streetAddress ,phone and tosAgreement  
-returns Statuscode and Response as below:
- ~~~
-|Method|URL  |
-|--|--|
-|POST  |/users/  |
----
 
-| Type |Mandatory params|Value  |
-|--|--|--|
-| JSON Payload | fullName |String  |
-| JSON Payload | streeAddress |String  |
-| JSON Payload | email |String  |
-| JSON Payload | password |String  |
-| JSON Payload | phone |String(10)  |
-| JSON Payload | tosAgreement |Boolean  |
----
-Returns:
-|StatusCode  |Response  |
-|--|--|
-|200  |{}  |
-|200  |{}  |
-|400|{"error":"Invalid fullName or it already exists"}|
-|400|{"error":"Invalid password - should be atleast 8 chars"}|
-|400|{"error":"Missing required fields or invalid"}|
-|500|{"error":"Could not create new user"}|
-|500|{"error":"Could not create new user- NULL Hash"}|
-
-
-**2. Get user details**
-~~~
-Get `users` record given :  phone, and token
-returns Statuscode and Response as below:
- ~~~
-|Method|URL  |
-|--|--|
-|GET  |/users/?phone=9999999999  |
----
-
-| Type |Mandatory params|Value  |
-|--|--|--|
-| HEADER | token |String(20)  |
-| QUERYSTRING | phone |String(10)  |
-
----
-Returns:
-|StatusCode  |Response  |
-|--|--|
-|200  |{<br>"fullName": “xxxxx”,<br>"email": "yyy@xx.co.in",<br>"streetAddress": “ string with address”<br>"phone":   “9999999999”<br>}|
-|400|{"error":"Missing or invalid field/s"}|
-|403|{"error":"unauthorised request - rejected"}|
-|404|{}|
-|500|{"error":"Something went wrong. Please try again later."}|
----
-<!--stackedit_data:
-eyJoaXN0b3J5IjpbMTU1MDYzODE1MiwxMTU3MzczNjgxLDI2Nj
-UzMDE1OSwtMTA2MjAyNTA1LC0xNjA4MTEzMTQ4LDE5MzE3MjQ3
-ODcsOTQ3NDU2MDgxLDI2MDUwNTUxNV19
--->
+API Specification available [here] (https://github.com/ugmurthy/nodejs/blob/master/assignment_2/lib/API_Specification.md)
