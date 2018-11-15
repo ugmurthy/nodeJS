@@ -1,6 +1,14 @@
 ##  nodeJS MasterClass
----
-#### Assignment #1
+### INDEX
+	1. Assignment #1
+	2. Assignment #2
+		API for a pizza-delivery company:
+		Specification
+			Database
+				menugenerator
+			API Specification
+---		
+### Assignment #1
 filename : hello.js
 
 Usage: 
@@ -19,10 +27,10 @@ url --header "Content-Type: application/json" \
   http://localhost:3000/hello
 ```
 ---
-#### Assignment #2
+### Assignment #2
 
-API for a pizza-delivery company. Specs: 
-
+### API for a pizza-delivery company: 
+### Requirements:
 1. New users can be created, their information can be edited, and they can be deleted. We should store their name, email address, and street address.
 
 2. Users can log in and log out by creating or destroying a token.
@@ -34,18 +42,23 @@ API for a pizza-delivery company. Specs:
 5. A logged-in user should be able to create an order. You should integrate with the Sandbox of Stripe.com to accept their payment. Note: Use the stripe sandbox for your testing. Follow this link and click on the "tokens" tab to see the fake tokens you can use server-side to confirm the integration is working: https://stripe.com/docs/testing#cards
 
 6. When an order is placed, you should email the user a receipt. You should integrate with the sandbox of Mailgun.com for this. Note: Every Mailgun account comes with a sandbox email account domain (whatever@sandbox123.mailgun.org) that you can send from by default. So, there's no need to setup any DNS for your domain for this task https://documentation.mailgun.com/en/latest/faqs.html#how-do-i-pick-a-domain-name-for-my-mailgun-account
-
----
-##### API Document
-
-Avaialble here : https://docs.google.com/document/d/1qzlhaQNNIwDiIS9BlEHuml8PwDI_PUofehBl5g1NZBo/edit?usp=sharing
-
 ---
 
-##### menu.json
+#### Specifications:
+##### Database
+The API will enable CRUD for the following entities: 
+1. `users`  to keep user records, 
+2. `tokens`to ensure authenticated users are allowed to act on their own data 
+3. `menu` contains what is is available for ordering, 
+4. `cart`is an e-cart for populating menu items
+5. `orders`contains details of what to order
 
-menu.json was generated using www.json-generator.com with the following template
+All of above are json files and the structure are available [here] (https://github.com/ugmurthy/nodejs/blob/master/assignment_2/structures.json). All of these files reside in `.data` directory 
 
+`data.js` implements all basic routines to `create, read, write, update, delete and list` files
+
+###### menugenerator
+The menu items were created using `menugen.js` which create all menu items. The menu items were generated using [www.json-generator.com](http://www.json-generator.com/) with the following template 
 ```
 [
   '{{repeat(30)}}',
@@ -63,7 +76,6 @@ menu.json was generated using www.json-generator.com with the following template
   }
 ]
 ```
-
 copy paste the generated array containing JSON element to `menugen.js` and
 execute the following command:
 
@@ -71,37 +83,66 @@ execute the following command:
 
 one file per menu item will be generated in the `.data/menu` directory
 
-
-
+##### API Specification
+**1. Create new user**
+~~~
+Create `users` record given :  fullName, password
+email ,streetAddress ,phone and tosAgreement  
+returns Statuscode and Response as below:
+ ~~~
+|Method|URL  |
+|--|--|
+|POST  |/users/  |
 ---
 
-##### Cart
+| Type |Mandatory params|Value  |
+|--|--|--|
+| JSON Payload | fullName |String  |
+| JSON Payload | streeAddress |String  |
+| JSON Payload | email |String  |
+| JSON Payload | password |String  |
+| JSON Payload | phone |String(10)  |
+| JSON Payload | tosAgreement |Boolean  |
+---
+Returns:
+|StatusCode  |Response  |
+|--|--|
+|200  |{}  |
+|200  |{}  |
+|400|{"error":"Invalid fullName or it already exists"}|
+|400|{"error":"Invalid password - should be atleast 8 chars"}|
+|400|{"error":"Missing required fields or invalid"}|
+|500|{"error":"Could not create new user"}|
+|500|{"error":"Could not create new user- NULL Hash"}|
 
-the following CART structure contains reference to USER by phone, it has complete info on menuitems to place and order and calculate total amount. 
-Assumption: 
-- One user has only one CART and is indicated by reference to cartID in the USER record.
-```
-{
-    "cartId": "5be10cff6278f1eebbf1587f",
-    "phone": "9425903782",
-    "lineItems": [
-      {
-        "id": "0",
-        "menuIndex": 0,
-        "name": "Pizza est laborum",
-        "size": "12 inch",
-        "price": 105.79,
-        "Quantity": 1
-      },
-      {
-        "id": "1",
-        "menuIndex": 1,
-        "name": "Pizza dolor aute",
-        "size": "8 inch",
-        "price": 134.91,
-        "Quantity": 3
-      }
-    ]
-  }
-```
 
+**2. Get user details**
+~~~
+Get `users` record given :  phone, and token
+returns Statuscode and Response as below:
+ ~~~
+|Method|URL  |
+|--|--|
+|GET  |/users/?phone=9999999999  |
+---
+
+| Type |Mandatory params|Value  |
+|--|--|--|
+| HEADER | token |String(20)  |
+| QUERYSTRING | phone |String(10)  |
+
+---
+Returns:
+|StatusCode  |Response  |
+|--|--|
+|200  |{<br>"fullName": “xxxxx”,<br>"email": "yyy@xx.co.in",<br>"streetAddress": “ string with address”<br>"phone":   “9999999999”<br>}|
+|400|{"error":"Missing or invalid field/s"}|
+|403|{"error":"unauthorised request - rejected"}|
+|404|{}|
+|500|{"error":"Something went wrong. Please try again later."}|
+---
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbMTU1MDYzODE1MiwxMTU3MzczNjgxLDI2Nj
+UzMDE1OSwtMTA2MjAyNTA1LC0xNjA4MTEzMTQ4LDE5MzE3MjQ3
+ODcsOTQ3NDU2MDgxLDI2MDUwNTUxNV19
+-->
