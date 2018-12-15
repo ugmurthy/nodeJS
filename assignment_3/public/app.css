@@ -1,9 +1,10 @@
 /*
- *  CSS Styles for Application
+ * CSS Styles for Application
  *
  */
 
- body,p,h1,h2,h3,h4,h5,h6,div,span,header,footer,img,a,a:hover,a:active,a:visited,table,tr,td,th,form,input,button,select,textarea{
+/* Resets */
+body,p,h1,h2,h3,h4,h5,h6,div,span,header,footer,img,a,a:hover,a:active,a:visited,table,tr,td,th,form,input,button,select,textarea{
   line-height: 100%;
   padding: 0;
   margin: 0;
@@ -34,7 +35,6 @@
   width: 100%;
   padding: 20px 0;
   min-width: 1200px;
-  z-index: 99;
 }
 
 .header ul{
@@ -80,10 +80,8 @@ body.loggedIn .header ul li.loggedOut{
 .content {
   margin-top: 150px;
   width: 1000px;
-  margin: 40px auto;
+  margin: 150px auto;
 }
-
-
 
 .footer{
   width: 100%;
@@ -94,7 +92,6 @@ body.loggedIn .header ul li.loggedOut{
   border-color: #fff;
   border-style: solid;
 }
-
 
 .footer .copyright{
   color: #fff;
@@ -124,21 +121,7 @@ body.index .blurb{
   border-color: #b3b3b3;
   border-style: dotted;
   border-width: 1px;
-  border-radius: 10px;
-  padding: 20px;
-  margin: 0 auto 20px auto;
-  max-width: 500px;
-  line-height: 150%;
-  font-size: 14px;
-}
-
-body.menuList .blurb{
-  text-align: center;
-  background-color: #ececec;
-  border-color: #b3b3b3;
-  border-style: dotted;
-  border-width: 1px;
-  border-radius: 10px;
+  border-radius: 5px;
   padding: 20px;
   margin: 0 auto 20px auto;
   max-width: 500px;
@@ -161,64 +144,6 @@ body.menuList .blurb{
   padding: 15px;
   width: 150px;
   cursor: pointer;
-  max-width:100%;
-}
-
-.menucta,a.menucta:hover,a.menucta:active,a.menucta:visited,button.menucta:hover,button.menucta:active,button.menucta:visited{
-  background-color: #1a1a1a;
-  color: #fff;
-  text-transform: uppercase;
-  font-weight: bold;
-  text-align: center;
-  display: inline-block;
-  padding-top:10px;
-  padding-bottom: 10px;
-  width: 150px;
-  cursor: pointer;
-  max-width:100%;
-}
-
-.menucta.green:hover{background-color:orange !important;}
-
-.menucta.green:active{background-color:red !important;}
-
-.menuctahelper{
-  width: 150px;
-  background-color: #1a1a1a;
-  color: #fff;
-  text-transform: uppercase;
-  font-weight: bold;
-  text-align: center;
-  display: inline-block;
-}
-
-.displayName{
-  background-color: #217844;
-  color: #fff;
-  width: auto;
-  display: block;
-  font-weight: bold;
-  text-align: center;
-}
-
-.blueBackground{
-  background-color: #214478 !important;
-}
-
-.menucta.green{
-  background-color: #217844 !important;
-}
-
-.menuctahelper.blue{
-  background-color: #214478 !important;
-}
-
-.pizzaCaptionWrapper {
-  display: flex;
-}
-
-.pizzaCaptionCta {
-  width:50%;
 }
 
 .cta.blue{
@@ -228,7 +153,6 @@ body.menuList .blurb{
 .cta.green{
   background-color: #217844 !important;
 }
-
 
 .cta.red{
   background-color: #c83737 !important;
@@ -367,82 +291,3 @@ td a, td a:hover, td a:active{
   margin-top: 40px;
   display: none;
 }
-
-.containerImageAndText {
-    position: relative;
-    width: 50%;
-}
-
-.imageHovered {
-  opacity: 1;
-  display: block;
-  width: 100%;
-  height: auto;
-  transition: .5s ease;
-  backface-visibility: hidden;
-}
-
-.textMiddleAboveImage {
-  transition: .5s ease;
-  opacity: 1;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
-  text-align: center;
-}
-
-.textAboveImage {
-  color: green;
-  font-size: 16px;
-  padding: 16px 32px;
-}
-
-#noItemsOnShoppingCartMessage td{
-  text-align: center;
-  font-style: italic;
-  font-size: 20px;
-  padding: 20px;
-}
-
-#noItemsOnShoppingCartMessage{
-  display: none;
-}
-
-#moveToMenuCTA{
-  margin-top: 40px;
-  display: none;
-}
-
-#shoppingCartTotal{
-  font-size: 1.125rem;
-  font-weight: 200;
-  line-height: 1.8;
-}
-
-span + button, span + button:hover {
-    margin-left: 20px;
-}
-
-#totalAmountCTA{
-  margin-top: 20px;
-  display: none;
-}
-
-#moveToCartCTA{
-  margin-top: 40px;
-  display: none;
-}
-
-#noOrdersMessage{
-  display: none;
-}
-
-#noOrdersMessage td{
-  text-align: center;
-  font-style: italic;
-  font-size: 20px;
-  padding: 20px;
-}
-

@@ -225,12 +225,72 @@ helpers.getTemplate = function(templateName, data, callback){
         callback("No template could be found")
       }
     });
+  } else {
+    callback("A valid template was not specified");
   }
 };
 
 helpers.interpolate = function(str,data){
+  str = typeof(str) == 'string' && str.length > 0 ? str : '';
+  data = typeof(data) == 'object' && data != null ? data : {};
+
+  // add the templateGlobals to the data object, prepending their keyname with 'globals'
+  for (var keyName in config.templateGlobals) {
+    if (config.templateGlobals.hasOwnProperty(keyName)) {
+      data['global.'+keyName] = config.templateGlobals[keyName];
+
+    }
+  }
+  // console.log(JSON.stringify(data));
+  // for each key in data object, inserts it value into string at the correspondng location
+  for (var key in data) {
+    if (data.hasOwnProperty(key) && typeof(data[key]) =='string') {
+      var replace = data[key];
+      var find = '{'+key+"}";
+
+      str = str.replace(find,replace);
+    }
+  }
   return str;
 };
+
+// Add the universal header and footer to a string
+helpers.addUniversalTemplates = function(str,data,callback) {
+  str = typeof(str) == 'string' && str.length > 0 ? str : '';
+  data = typeof(data) == 'object' && data != null ? data : {};
+  // get header
+  helpers.getTemplate('_header',data,function(err,headerString){
+    if (!err && headerString) {
+      // get footer
+      helpers.getTemplate('_footer',data,function(err,footerString){
+        if (!err && footerString) {
+          var fullString = headerString+str+footerString;
+          callback(false,fullString);
+        } else {
+          callback("Count not find footer template")
+        }
+      })
+    } else {
+      callback("Could not find header template")
+    }
+  })
+};
+
+helpers.getStaticAsset = function(fileName,callback) {
+  fileName = typeof(fileName) == 'string' && fileName.length>0 ? fileName : false;
+  if (fileName) {
+    var publicDir = path.join(__dirname,'/../public/');
+    fs.readFile(publicDir+fileName,function(err,data){
+      if (!err && data ) {
+        callback(false,data);
+      } else {
+        callback("No file exists");
+      }
+    });
+  } else {
+    callback("A valid file name was not specified")
+  }
+}
 
 
 // export the module

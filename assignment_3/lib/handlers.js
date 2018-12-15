@@ -18,23 +18,99 @@ var handlers = {};
 // Index
 handlers.index = function(data,callback) {
 	// reject any method other than GET
-	var getTemplateData = {};
+	if (data.method == 'get') {
 
-	helpers.getTemplate('index',getTemplateData, function(err,str){
-		
-		if (!err) { console.log("NO ERROR", err)};
+		var templateData = {
+			'head.title' : 'Pirple Pizza',
+			'head.description' : 'The best pizza in town',
+			'body.class' : 'index'
+		};
 
-		if (str) {console.log("STR", str)};
-		
-		if (!err && str) {
-			callback(200,str,'html');
-		} else {
-			callback(500,undefined,'html');
-		}
-	});
-
+		helpers.getTemplate('index',templateData, function(err,str){
+			if (!err && str) {
+				// add the universal header and footer
+				helpers.addUniversalTemplates(str, templateData, function(err,str){
+					debugger;
+					if (!err && str) {
+						callback(200,str,'html');
+					} else {
+						callback(500,undefined,'html');
+					}
+				});
+			} else {
+				callback(500,undefined,'html');
+			}
+		});
+ 	} else {
+ 	callback(405,undefined,'html')
+ 	}
 };
 
+/// STATIC ASSET - Favicon.ico
+handlers.favicon = function(data,callback){
+	// Reject any request other than GET
+	if (data.method == 'get') {
+		// read favicon
+		helpers.getStaticAsset('favicon.ico',function(err,data){
+			if (!err && data) {
+				callback(200,data,'favicon');
+			} else {
+				callback(500);
+			}
+		});
+	} else {
+		callback(405)
+	}
+}
+
+// Public assets
+handlers.public = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method == 'get'){
+    // Get the filename being requested
+    var trimmedAssetName = data.trimmedPath.replace('public/','').trim();
+    if(trimmedAssetName.length > 0){
+      // Read in the asset's data
+      helpers.getStaticAsset(trimmedAssetName,function(err,data){
+        if(!err && data){
+
+          // Determine the content type (default to plain text)
+          var contentType = 'plain';
+
+          if(trimmedAssetName.indexOf('.css') > -1){
+            contentType = 'css';
+          }
+
+          if(trimmedAssetName.indexOf('.png') > -1){
+            contentType = 'png';
+          }
+
+          if(trimmedAssetName.indexOf('.jpg') > -1){
+            contentType = 'jpg';
+          }
+
+          if(trimmedAssetName.indexOf('.ico') > -1){
+            contentType = 'favicon';
+          }
+
+          if(trimmedAssetName.indexOf('.html') > -1){
+          	contentType = 'html';
+          }
+
+          // Callback the data
+          callback(200,data,contentType);
+        } else {
+          callback(404);
+        }
+      });
+    } else {
+      callback(404);
+    }
+
+  } else {
+    callback(405);
+  }
+};
 
 
 /*

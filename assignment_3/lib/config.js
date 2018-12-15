@@ -19,7 +19,13 @@ environments.staging = {
 	'maxLineItems':5,
 	'emailAutomation': {},
 	'mailgun':mailgun,
-	'mailjet':mailjet
+	'mailjet':mailjet,
+  'templateGlobals' : {
+  	'appName' : 'PirplePizza',
+  	'companyName' : 'Muve Solutions LLP',
+  	'yearCreated' : '2018',
+  	'baseUrl': 'http://localhost:3000/'
+  }
 };
 
 environments.production = {
@@ -31,7 +37,13 @@ environments.production = {
 	'maxLineItems':5,
 	'emailAutomation':{},
 	'mailgun':mailgun,
-	'mailjet':mailjet
+	'mailjet':mailjet,
+  'templateGlobals' : {
+  	'appName' : 'PirplePizza',
+  	'companyName' : 'Muve Solutions LLP',
+  	'yearCreated' : '2018',
+  	'baseUrl': 'http://localhost:3000/'
+  }
 };
 
 

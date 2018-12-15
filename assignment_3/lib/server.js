@@ -169,7 +169,9 @@ server.router = {
   'api/cart': handlers.cart,
   'api/orders':handlers.orders,
   'api/pay':handlers.pay,
-  'api/sendmail':handlers.sendmail
+  'api/sendmail':handlers.sendmail,
+  'favicon.ico' : handlers.favicon,
+  'public': handlers.public
 };
 
 // init script

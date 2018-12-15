@@ -1,13 +1,13 @@
 specs.md
 
 1. Signup on the site
-	- implement handlers.index
+	1- implement handlers.index
 		- load simple index page
-	- interpolate and combine
+	2- interpolate and combine
 		- interpolate for data
 		- combine header, index, footer
 
-	- implement handlers.accountCreate
+	3- implement handlers.accountCreate
 	- implement handlers.accountEdit
 	- implement handlers.accountDelete
 	
