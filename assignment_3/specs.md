@@ -7,10 +7,14 @@ specs.md
 		- interpolate for data
 		- combine header, index, footer
 
-	3- implement handlers.accountCreate
-	- implement handlers.accountEdit
-	- implement handlers.accountDelete
+	3- implement dummy handlers.accountCreate
+	 - implement dummy handlers.accountEdit
+	 - implement dummy handlers.accountDelete
 	
+	4- implement  handlers.accountCreate
+	 - implement  handlers.accountEdit
+	 - implement  handlers.accountDelete
+
 2. View all the items available to order
 
 3. Fill up a shopping cart
