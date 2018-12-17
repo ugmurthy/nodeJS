@@ -8,7 +8,7 @@ body,p,h1,h2,h3,h4,h5,h6,div,span,header,footer,img,a,a:hover,a:active,a:visited
   line-height: 100%;
   padding: 0;
   margin: 0;
-  font-family: sans-serif;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 12px;
   font-weight: normal;
   text-decoration: none;
@@ -33,7 +33,7 @@ body,p,h1,h2,h3,h4,h5,h6,div,span,header,footer,img,a,a:hover,a:active,a:visited
   top: 0;
   left: 0;
   width: 100%;
-  padding: 20px 0;
+  padding: 15px 0;
   min-width: 1200px;
 }
 
@@ -52,7 +52,7 @@ body,p,h1,h2,h3,h4,h5,h6,div,span,header,footer,img,a,a:hover,a:active,a:visited
 .header ul li a{
   text-transform: uppercase;
   font-weight: 900 !important;
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .header ul li.loggedIn{
@@ -86,7 +86,7 @@ body.loggedIn .header ul li.loggedOut{
 .footer{
   width: 100%;
   background-color: #1a1a1a;
-  padding: 50px 0;
+  padding: 20px 0;
   text-align: center;
   border-width: 1px 0 0 0;
   border-color: #fff;

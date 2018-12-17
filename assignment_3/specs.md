@@ -1,22 +1,22 @@
 specs.md
 
-1. Signup on the site
+BASICS - user CRUD
 	1- implement handlers.index
 		- load simple index page
 	2- interpolate and combine
 		- interpolate for data
 		- combine header, index, footer
 
-	3- implement dummy handlers.accountCreate
-	 - implement dummy handlers.accountEdit
-	 - implement dummy handlers.accountDelete
-	
-	4- implement  handlers.accountCreate
-	 - implement  handlers.accountEdit
-	 - implement  handlers.accountDelete
+	3.1 - implement dummy handlers.accountCreate 
+	3.2 - implement dummy handlers.accountEdit including delete user
+	3.3 - implement dummy handlers.accountDelete 
+	3.4 - implement login handlers.sessionCreate
+	3.5 - implement and logout handlers.sessionDelete
 
-2. View all the items available to order
+MENU
+1. View all the items available to order from the menu
 
 3. Fill up a shopping cart
 
 4. Place an order (with fake credit card credentials), and receive an email receipt
+

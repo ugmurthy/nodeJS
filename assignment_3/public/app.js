@@ -60,7 +60,7 @@ app.client.request = function(headers,path,method,queryStringObject,payload,call
 
   // If there is a current session token set, add that as a header
   if(app.config.sessionToken){
-    xhr.setRequestHeader("token", app.config.sessionToken.id);
+    xhr.setRequestHeader("token", app.config.sessionToken.tokenid);
   }
 
   // When the request comes back, handle the response
@@ -93,6 +93,8 @@ app.bindForms = function(){
   if(document.querySelector("form")){
 
     var allForms = document.querySelectorAll("form");
+    // for each form - Capture id,action,methon, Prepare payload for app.client call
+    // headers and querystring are preparded in app.client
     for(var i = 0; i < allForms.length; i++){
         allForms[i].addEventListener("submit", function(e){
 
@@ -154,7 +156,6 @@ app.bindForms = function(){
 
         // If the method is DELETE, the payload should be a queryStringObject instead
         var queryStringObject = method == 'DELETE' ? payload : {};
-        debugger
         // Call the API
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
           // Display an error on the form if needed
@@ -211,16 +212,18 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
       } else {
         // If successful, set the token and redirect the user
         app.setSessionToken(newResponsePayload);
-        // TODO - change the location to appropriate location for now it is HOME
-        window.location = '/account/edit';
+        // TODO - change the location to appropriate path
+        window.location = '';
       }
     });
   }
   // If login was successful, set the token in localstorage and redirect the user
   if(formId == 'sessionCreate'){
     app.setSessionToken(responsePayload);
-    window.location = '/checks/all';
+    // TODO - change the location to appropriate path
+    window.location = '';
   }
+
 
   // If forms saved successfully and they have success messages, show them
   var formsWithSuccessMessages = ['accountEdit1', 'accountEdit2','checksEdit1'];
@@ -246,6 +249,42 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
 
 };
 
+// Bind the logout button
+app.bindLogoutButton = function(){
+  document.getElementById("logoutButton").addEventListener("click", function(e){
+
+    // Stop it from redirecting anywhere
+    e.preventDefault();
+
+    // Log the user out
+    app.logUserOut();
+
+  });
+};
+
+// Log the user out then redirect them
+app.logUserOut = function(redirectUser){
+  // Set redirectUser to default to true
+  redirectUser = typeof(redirectUser) == 'boolean' ? redirectUser : true;
+
+  // Get the current token id
+  var tokenId = typeof(app.config.sessionToken.tokenid) == 'string' ? app.config.sessionToken.tokenid : false;
+
+  // Send the current token to the tokens endpoint to delete it
+  var queryStringObject = {
+    'token' : tokenId
+  };
+  app.client.request(undefined,'api/tokens','DELETE',queryStringObject,undefined,function(statusCode,responsePayload){
+    // Set the app.config token as false
+    app.setSessionToken(false);
+
+    // Send the user to the logged out page
+    if(redirectUser){
+      window.location = '/session/deleted';
+    }
+
+  });
+};
 // Set the session token in the app.config object as well as localstorage
 app.setSessionToken = function(token){
   app.config.sessionToken = token;
@@ -287,6 +326,76 @@ app.getSessionToken = function(){
   }
 };
 
+// Load data on the page
+app.loadDataOnPage = function(){
+  // Get the current page from the body class
+  var bodyClasses = document.querySelector("body").classList;
+  var primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
+
+  // Logic for account settings page
+  if(primaryClass == 'accountEdit'){
+    app.loadAccountEditPage();
+  }
+
+  // Logic for dashboard page
+  if(primaryClass == 'checksList'){
+    app.loadChecksListPage();
+  }
+
+  // Logic for check details page
+  if(primaryClass == 'checksEdit'){
+    app.loadChecksEditPage();
+  }
+};
+
+// Load the account edit page specifically
+app.loadAccountEditPage = function(){
+  // Get the phone number from the current token, or log the user out if none is there
+  var phone = typeof(app.config.sessionToken.phone) == 'string' ? app.config.sessionToken.phone : false;
+  if(phone){
+    // Fetch the user data
+    var queryStringObject = {
+      'phone' : phone
+    };
+    debugger;
+    app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+      if(statusCode == 200){
+        // Put the data into the forms as values where needed
+        document.querySelector("#accountEdit1 .fullNameInput").value = responsePayload.fullName;
+        document.querySelector("#accountEdit1 .streetAddressInput").value = responsePayload.streetAddress;
+        document.querySelector("#accountEdit1 .displayPhoneInput").value = responsePayload.phone;
+        document.querySelector("#accountEdit1 .emailInput").value = responsePayload.email;
+
+        // Put the hidden phone field into both forms
+        var hiddenPhoneInputs = document.querySelectorAll("input.hiddenPhoneNumberInput");
+        for(var i = 0; i < hiddenPhoneInputs.length; i++){
+            hiddenPhoneInputs[i].value = responsePayload.phone;
+        }
+
+      } else {
+        // If the request comes back as something other than 200, log the user our (on the assumption that the api is temporarily down or the users token is bad)
+        app.logUserOut();
+      }
+    });
+  } else {
+    app.logUserOut();
+  }
+};
+
+
+// Loop to renew token often
+app.tokenRenewalLoop = function(){
+  setInterval(function(){
+    app.renewToken(function(err){
+      if(!err){
+        console.log("Token renewed successfully @ "+Date.now());
+      }
+    });
+  },1000 * 60);
+};
+
+
+
 // Init (bootstrapping)
 app.init = function(){
 
@@ -294,16 +403,16 @@ app.init = function(){
   app.bindForms();
 
   // Bind logout logout button
-  //app.bindLogoutButton();
+  app.bindLogoutButton();
 
   // Get the token from localstorage
   app.getSessionToken();
 
   // Renew token
-  //app.tokenRenewalLoop();
+  app.tokenRenewalLoop();
 
   // Load data on page
-  //app.loadDataOnPage();
+  app.loadDataOnPage();
 
 };
 
