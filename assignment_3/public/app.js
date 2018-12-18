@@ -16,7 +16,7 @@ app.client = {}
 
 // Interface for making API calls
 app.client.request = function(headers,path,method,queryStringObject,payload,callback){
-
+  debugger;
   // Set defaults
   // default to {}
   headers = typeof(headers) == 'object' && headers !== null ? headers : {};
@@ -157,6 +157,8 @@ app.bindForms = function(){
         // If the method is DELETE, the payload should be a queryStringObject instead
         var queryStringObject = method == 'DELETE' ? payload : {};
         // Call the API
+        debugger;
+        console.log(path,method,payload);
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
           // Display an error on the form if needed
           if(statusCode !== 200){
@@ -338,8 +340,8 @@ app.loadDataOnPage = function(){
   }
 
   // Logic for dashboard page
-  if(primaryClass == 'checksList'){
-    app.loadChecksListPage();
+  if(primaryClass == 'menuList'){
+    page.tableInit();
   }
 
   // Logic for check details page
@@ -389,9 +391,47 @@ app.tokenRenewalLoop = function(){
     app.renewToken(function(err){
       if(!err){
         console.log("Token renewed successfully @ "+Date.now());
+      } else {
+        // redirect to home page
+        window.location ='';
       }
     });
   },1000 * 60);
+};
+
+// Renew the token
+app.renewToken = function(callback){
+  var currentToken = typeof(app.config.sessionToken) == 'object' ? app.config.sessionToken : false;
+  if(currentToken){
+    // Update the token with a new expiration
+    var payload = {
+      'token' : currentToken.tokenid,
+      'extend' : true,
+    };
+    app.client.request(undefined,'api/tokens','PUT',undefined,payload,function(statusCode,responsePayload){
+      // Display an error on the form if needed
+      if(statusCode == 200){
+        // Get the new token details
+        var queryStringObject = {'id' : currentToken.id};
+        app.client.request(undefined,'api/tokens','GET',queryStringObject,undefined,function(statusCode,responsePayload){
+          // Display an error on the form if needed
+          if(statusCode == 200){
+            app.setSessionToken(responsePayload);
+            callback(false);
+          } else {
+            app.setSessionToken(false);
+            callback(true);
+          }
+        });
+      } else {
+        app.setSessionToken(false);
+        callback(true);
+      }
+    });
+  } else {
+    app.setSessionToken(false);
+    callback(true);
+  }
 };
 
 

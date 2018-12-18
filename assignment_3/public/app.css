@@ -158,6 +158,14 @@ body.index .blurb{
   background-color: #c83737 !important;
 }
 
+.cta.nextprev,a:cta.nextprev:hover{
+  background-color: #333333 !important;
+  border-radius: 5px;
+  text-transform: uppercase;
+  line-height: 60%;
+  font-size: 12px;
+  width: 90px;
+}
 .warning{
   font-style: italic;
   color: #c83737;
@@ -266,6 +274,7 @@ th{
 
 td{
   padding: 5px;
+  text-align: center;
 }
 
 td a, td a:hover, td a:active{

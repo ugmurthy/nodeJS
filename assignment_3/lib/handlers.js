@@ -79,7 +79,7 @@ handlers.accountEdit = function(data,callback){
 // Create New Session
 handlers.sessionCreate = function(data,callback){
   // Reject any request that isn't a GET
-  console.log("sessionCreate");
+  //console.log("sessionCreate");
   if(data.method == 'get'){
     // Prepare data for interpolation
     var templateData = {
@@ -171,7 +171,35 @@ handlers.accountDeleted = function(data,callback){
 };
 
 
-
+// Dashboard (view all checks)
+handlers.menuList = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method == 'get'){
+    // Prepare data for interpolation
+    var templateData = {
+      'head.title' : 'Menu',
+      'body.class' : 'menuList'
+    };
+    // Read in a template as a string
+    helpers.getTemplate('menuList',templateData,function(err,str){
+      if(!err && str){
+        // Add the universal header and footer
+        helpers.addUniversalTemplates(str,templateData,function(err,str){
+          if(!err && str){
+            // Return that page as HTML
+            callback(200,str,'html');
+          } else {
+            callback(500,undefined,'html');
+          }
+        });
+      } else {
+        callback(500,undefined,'html');
+      }
+    });
+  } else {
+    callback(405,undefined,'html');
+  }
+};
 
 // Index
 handlers.index = function(data,callback) {
@@ -1223,7 +1251,7 @@ handlers._menu.generate = function(menuItems,callback) {
 
 // Users
 handlers.users = function(data, callback) {
-	console.log('Handler: users')
+	//console.log('Handler: users')
 	var acceptableMethods = ['post', 'get', 'put','delete'];
 	if (acceptableMethods.indexOf(data.method) > -1){
 		handlers._users[data.method](data,callback);
@@ -1241,7 +1269,7 @@ handlers._users = {};
 // optional data = None
 handlers._users.post = function(data,callback) {
 	// check all required field are filled out
-	console.log("Handler: _user.post");
+	// console.log("Handler: _user.post");
 
 	var fullName 
 		= typeof(data.payload.fullName) == 'string' && data.payload.fullName.trim().length > 0 
@@ -1286,6 +1314,8 @@ handlers._users.post = function(data,callback) {
 	
 
 	// make sure mandatory fields exisit
+	//console.log(fullName,email,phone,password,streetAddress,tosAgreement);
+
 	if (fullName &&  email && phone && password && streetAddress && tosAgreement) {
 		// make sure user does not exist 
 		_data.read('users',phone, function(err,data){

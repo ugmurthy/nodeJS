@@ -163,6 +163,7 @@ server.router = {
   'account/deleted': handlers.accountDeleted,
   'session/create': handlers.sessionCreate,
   'session/deleted': handlers.sessionDeleted,
+  'menu/list':handlers.menuList,
   'api/users' : handlers.users,
   'api/tokens' : handlers.tokens,
   'api/menu': handlers.menu,
