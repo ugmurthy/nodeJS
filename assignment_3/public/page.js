@@ -377,7 +377,7 @@ var page = {}; // container for page realted functions called from app
 
 var current_page = 1;
 var records_per_page = 10;
-var cols_per_record = 4
+var cols_per_record = 5
 
 function prevPage()
 {
@@ -445,11 +445,13 @@ function changePage(page)
     for (var r=1 ; r<rows; r++) { // exclude table header therefore starting from 1
             if (idx < objJson.length) {
                 var item = objJson[idx] // point to current data record
-            
+                var alink = '<a href="/menu/item/?menuIndex='+item.menuIndex+'">Add to Cart</a>'
                 menuTable.rows[r].cells[0].innerHTML=item.crust +'crust';
                 menuTable.rows[r].cells[1].innerHTML=item.size
                 menuTable.rows[r].cells[2].innerHTML=item.description
                 menuTable.rows[r].cells[3].innerHTML=item.price
+                menuTable.rows[r].cells[4].innerHTML=alink
+
                 idx += 1;
             }
     }

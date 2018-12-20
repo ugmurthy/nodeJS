@@ -15,8 +15,16 @@ BASICS - user CRUD
 
 MENU
 1. View all the items available to order from the menu
+2. List of menu item contains href to item
+3. Click line item in list to select a menu item to enable see details and optional add it to the cart or back to list
+	GET	/menu/?menuIndex=nn&phone=9944994499
+	header = {token: "xxxxxxxxxxxxxxxxx"}
 
-3. Fill up a shopping cart
+TOKEN
+1. Resolve renew token bug (fails to renew(put) token as well as get token)
+ 
+CART
+1. Fill up a shopping cart
 
 4. Place an order (with fake credit card credentials), and receive an email receipt
 

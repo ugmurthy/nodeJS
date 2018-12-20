@@ -164,6 +164,7 @@ server.router = {
   'session/create': handlers.sessionCreate,
   'session/deleted': handlers.sessionDeleted,
   'menu/list':handlers.menuList,
+  'menu/item':handlers.menuItem,
   'api/users' : handlers.users,
   'api/tokens' : handlers.tokens,
   'api/menu': handlers.menu,

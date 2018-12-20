@@ -171,7 +171,7 @@ handlers.accountDeleted = function(data,callback){
 };
 
 
-// Dashboard (view all checks)
+// Dashboard (view all menu items)
 handlers.menuList = function(data,callback){
   // Reject any request that isn't a GET
   if(data.method == 'get'){
@@ -200,6 +200,39 @@ handlers.menuList = function(data,callback){
     callback(405,undefined,'html');
   }
 };
+
+handlers.menuItem = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method == 'get'){
+    // Prepare data for interpolation
+  var queryStringObject = data.queryStringObject;
+  console.log('menuItem: ',queryStringObject);
+  debugger;
+    var templateData = {
+      'head.title' : 'Menu',
+      'body.class' : 'menuItem'
+    };
+    // Read in a template as a string
+    helpers.getTemplate('menuItem',templateData,function(err,str){
+      if(!err && str){
+        // Add the universal header and footer
+        helpers.addUniversalTemplates(str,templateData,function(err,str){
+          if(!err && str){
+            // Return that page as HTML
+            callback(200,str,'html');
+          } else {
+            callback(500,undefined,'html');
+          }
+        });
+      } else {
+        callback(500,undefined,'html');
+      }
+    });
+  } else {
+    callback(405,undefined,'html');
+  }
+};
+
 
 // Index
 handlers.index = function(data,callback) {

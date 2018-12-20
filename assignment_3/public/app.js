@@ -16,7 +16,7 @@ app.client = {}
 
 // Interface for making API calls
 app.client.request = function(headers,path,method,queryStringObject,payload,callback){
-  debugger;
+  //debugger;
   // Set defaults
   // default to {}
   headers = typeof(headers) == 'object' && headers !== null ? headers : {};
@@ -157,8 +157,8 @@ app.bindForms = function(){
         // If the method is DELETE, the payload should be a queryStringObject instead
         var queryStringObject = method == 'DELETE' ? payload : {};
         // Call the API
-        debugger;
-        console.log(path,method,payload);
+        //debugger;
+        //console.log(path,method,payload);
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
           // Display an error on the form if needed
           if(statusCode !== 200){
@@ -344,6 +344,11 @@ app.loadDataOnPage = function(){
     page.tableInit();
   }
 
+if(primaryClass == 'menuItem'){
+    app.loadMenuItem();
+  }
+
+
   // Logic for check details page
   if(primaryClass == 'checksEdit'){
     app.loadChecksEditPage();
@@ -359,7 +364,7 @@ app.loadAccountEditPage = function(){
     var queryStringObject = {
       'phone' : phone
     };
-    debugger;
+    //debugger;
     app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
       if(statusCode == 200){
         // Put the data into the forms as values where needed
@@ -384,6 +389,43 @@ app.loadAccountEditPage = function(){
   }
 };
 
+app.loadMenuItem = function() {
+  // check variable name for id
+  var menuIndex = typeof(window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 
+      ? window.location.href.split('=')[1] 
+      : false;
+  
+  var phone = typeof(app.config.sessionToken.phone) == 'string' 
+      ? app.config.sessionToken.phone 
+      : false;
+
+  if(menuIndex && phone){
+    var queryStringObject = {
+      'menuIndex' : menuIndex,
+      'phone':phone
+    };
+
+    console.log(queryStringObject);
+    
+    app.client.request(undefined,'api/menu','GET',queryStringObject,undefined,function(statusCode,responsePayload) {
+      if (statusCode == 200) {
+
+        var itemTable = document.getElementById("menuItemTable");
+        var r=responsePayload;
+
+        itemTable.rows[0].cells[0].innerHTML = '<h2>' + r.size+'<br><br>'+r.crust+' crust <br></h2>'+r.description +'<h2><br><br>'+r.category+'</h2>'
+        itemTable.rows[0].cells[1].innerHTML = '<img src=https://dummyimage.com/200x200/000/fcfcfc.png&text='+r.category+' />'
+        itemTable.rows[1].cells[0].innerHTML ='<h2>Rate: Rs '+r.price + '</h2>'
+        itemTable.rows[1].cells[1].innerHTML =2
+
+      } else {
+        console.log("error trying to load menuIndex", menuIndex);
+        window.location = '/menu/list'
+      }
+    });  
+  
+  }
+};
 
 // Loop to renew token often
 app.tokenRenewalLoop = function(){
@@ -405,14 +447,15 @@ app.renewToken = function(callback){
   if(currentToken){
     // Update the token with a new expiration
     var payload = {
-      'token' : currentToken.tokenid,
+      'id' : currentToken.tokenid,
       'extend' : true,
     };
+    
     app.client.request(undefined,'api/tokens','PUT',undefined,payload,function(statusCode,responsePayload){
       // Display an error on the form if needed
       if(statusCode == 200){
         // Get the new token details
-        var queryStringObject = {'id' : currentToken.id};
+        var queryStringObject = {'id' : currentToken.tokenid};
         app.client.request(undefined,'api/tokens','GET',queryStringObject,undefined,function(statusCode,responsePayload){
           // Display an error on the form if needed
           if(statusCode == 200){
