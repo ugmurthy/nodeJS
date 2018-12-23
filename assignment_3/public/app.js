@@ -281,6 +281,7 @@ app.logUserOut = function(redirectUser){
   app.client.request(undefined,'api/tokens','DELETE',queryStringObject,undefined,function(statusCode,responsePayload){
     // Set the app.config token as false
     app.setSessionToken(false);
+    app.setCartData(false)
 
     // Send the user to the logged out page
     if(redirectUser){
@@ -298,6 +299,23 @@ app.setSessionToken = function(token){
     app.setLoggedInClass(true);
   } else {
     app.setLoggedInClass(false);
+  }
+};
+// cart is json {'amount': 999, 'items':999}
+app.setCartData = function(cart){
+  app.config.cartData = cart;
+  var cartString = JSON.stringify(cart);
+  localStorage.setItem('cart',cartString);
+};
+
+app.getCartData = function(){
+  var cartString = localStorage.getItem('cart');
+  if (typeof(cartString)=='string') {
+    try {
+      app.config.cartData = JSON.parse(cartString)
+    } catch (e) {
+      app.config.cartData = false;
+    }
   }
 };
 
@@ -406,11 +424,57 @@ app.loadCartList = function(responseData) {
       // call the api with phone/token to get all cart items
        app.client.request(undefined,'api/cart/','GET',queryStringObject,undefined,function(statusCode,responsePayload) {
           if (statusCode == 200) {
-            // populate the table with cart items
-            
-            for (var i = 0;i<responsePayload.lineItems.length;i++) {
-              console.log(i,":",JSON.stringify(responsePayload.lineItems[i]));
+            /*
+            ========================================================
+            {"cartId":"0kw1noupgog753ztbw0f","phone":"9999999990","lineItems":
+              [
+              {"menuIndex":"0","name":"Pizza elit ea","price":144.91,"quantity":"5"},
+              {"menuIndex":"6","name":"Pizza eiusmod Lorem","price":119.79,"quantity":"5"},
+              {"menuIndex":"7","name":"Pizza aliqua proident","price":134.53,"quantity":"5"}
+              ]
             }
+            ========================================================
+            */
+            // populate the table with cart items
+            // and get totals to update local storage
+            var lineItems = responsePayload.lineItems;
+            debugger;
+            var items = responsePayload.lineItems.length;
+            var totAmt = 0;
+            var lineAmt = 0;
+            var rate = 0;
+            var qty = 0;
+            var cartTable = document.getElementById('cartList');
+            //
+            for (var i = 0;i<items+1;i++) {
+            
+              var row = cartTable.insertRow(-1);
+              var nameCell = row.insertCell(0);
+              var rateCell = row.insertCell(1);
+              var qtyCell = row.insertCell(2);
+              var amtCell = row.insertCell(3);
+
+              if (i<items) {
+                rate = Number(lineItems[i].price);
+                qty = Number(lineItems[i].quantity);
+                lineAmt = rate*qty;
+                totAmt += lineAmt;
+                qtyCell.innerHTML = qty;
+                nameCell.innerHTML = lineItems[i].name;
+                rateCell.innerHTML = rate;
+                amtCell.innerHTML =lineAmt.toFixed(2)
+              } else { // total line
+                qtyCell.innerHTML = '<BOLD>TOTAL</BOLD>';
+                nameCell.innerHTML = '';
+                rateCell.innerHTML =  '';
+                amtCell.innerHTML =totAmt.toFixed(2)
+              }
+            }
+
+            //
+            var cart = {'items':items,'totalAmt':totAmt}
+            setCartData(cart)
+
           } else {
             // error
             console.log("Cannot find cart for this user :",phone);
