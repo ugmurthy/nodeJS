@@ -93,7 +93,7 @@ app.bindForms = function(){
   if(document.querySelector("form")){
 
     var allForms = document.querySelectorAll("form");
-    // for each form - Capture id,action,methon, Prepare payload for app.client call
+    // for each form - Capture id,action,method, Prepare payload for app.client call
     // headers and querystring are preparded in app.client
     for(var i = 0; i < allForms.length; i++){
         allForms[i].addEventListener("submit", function(e){
@@ -147,6 +147,7 @@ app.bindForms = function(){
                 }
               } else {
                 payload[nameOfElement] = valueOfElement;
+                console.log("payload: ",payload);
               }
 
             }
@@ -156,8 +157,8 @@ app.bindForms = function(){
 
         // If the method is DELETE, the payload should be a queryStringObject instead
         var queryStringObject = method == 'DELETE' ? payload : {};
+
         // Call the API
-        //debugger;
         //console.log(path,method,payload);
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
           // Display an error on the form if needed
@@ -170,7 +171,8 @@ app.bindForms = function(){
             } else {
 
               // Try to get the error from the api, or set a default error message
-              var error = typeof(responsePayload.Error) == 'string' ? responsePayload.Error : 'An error has occured, please try again';
+              //debugger;
+              var error = typeof(responsePayload.error) == 'string' ? responsePayload.error : 'An error has occured, please try again';
 
               // Set the formError field with the error text
               document.querySelector("#"+formId+" .formError").innerHTML = error;
@@ -239,9 +241,9 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
     window.location = '/account/deleted';
   }
 
-  // If the user just created a new check successfully, redirect back to the dashboard
-  if(formId == 'checksCreate'){
-    window.location = '/checks/all';
+  // If the user just to cart successfully, show cart, with button to menu
+  if(formId == 'addToCart'){
+      window.location = '/cart/list'
   }
 
   // If the user just deleted a check, redirect them to the dashboard
@@ -348,7 +350,9 @@ if(primaryClass == 'menuItem'){
     app.loadMenuItem();
   }
 
-
+if(primaryClass == 'cartList') {
+  app.loadCartList()
+}
   // Logic for check details page
   if(primaryClass == 'checksEdit'){
     app.loadChecksEditPage();
@@ -389,6 +393,36 @@ app.loadAccountEditPage = function(){
   }
 };
 
+app.loadCartList = function(responseData) {
+  var phone = typeof(app.config.sessionToken.phone) == 'string' 
+      ? app.config.sessionToken.phone 
+      : false;
+
+  if (phone) {
+      // setup quertstringobject to point to user
+      var queryStringObject = {'phone': phone};
+
+
+      // call the api with phone/token to get all cart items
+       app.client.request(undefined,'api/cart/','GET',queryStringObject,undefined,function(statusCode,responsePayload) {
+          if (statusCode == 200) {
+            // populate the table with cart items
+            
+            for (var i = 0;i<responsePayload.lineItems.length;i++) {
+              console.log(i,":",JSON.stringify(responsePayload.lineItems[i]));
+            }
+          } else {
+            // error
+            console.log("Cannot find cart for this user :",phone);
+          }
+       });
+  } else {
+    console.log("Invalid request - user not logged in");
+  } 
+
+  // use document.queryselec to seek element of interest and then update values for each item/field in a loop
+
+};
 app.loadMenuItem = function() {
   // check variable name for id
   var menuIndex = typeof(window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 
@@ -415,8 +449,18 @@ app.loadMenuItem = function() {
 
         itemTable.rows[0].cells[0].innerHTML = '<h2>' + r.size+'<br><br>'+r.crust+' crust <br></h2>'+r.description +'<h2><br><br>'+r.category+'</h2>'
         itemTable.rows[0].cells[1].innerHTML = '<img src=https://dummyimage.com/200x200/000/fcfcfc.png&text='+r.category+' />'
-        itemTable.rows[1].cells[0].innerHTML ='<h2>Rate: Rs '+r.price + '</h2>'
-        itemTable.rows[1].cells[1].innerHTML =2
+        itemTable.rows[1].cells[0].innerHTML ='<h2>Rate: Rs '+'<span id="rate">'+r.price+'</span>' + '</h2>'
+        itemTable.rows[1].cells[1].innerHTML ='<h2>Amount Rs '+'<span id="amt"></span></h2>';
+
+
+        var itemForm = document.getElementById("addToCart");
+        var input = document.createElement('input');
+
+        // append a child node - hidden input to pass menuIndex
+        input.setAttribute('type','hidden');
+        input.setAttribute('name','menuIndex');
+        input.setAttribute('value',queryStringObject.menuIndex);
+        itemForm.appendChild(input);
 
       } else {
         console.log("error trying to load menuIndex", menuIndex);
@@ -425,6 +469,10 @@ app.loadMenuItem = function() {
     });  
   
   }
+};
+
+app.placeOrder = function() {
+  console.log("Placing order");
 };
 
 // Loop to renew token often

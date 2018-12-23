@@ -207,13 +207,41 @@ handlers.menuItem = function(data,callback){
     // Prepare data for interpolation
   var queryStringObject = data.queryStringObject;
   console.log('menuItem: ',queryStringObject);
-  debugger;
     var templateData = {
       'head.title' : 'Menu',
       'body.class' : 'menuItem'
     };
     // Read in a template as a string
     helpers.getTemplate('menuItem',templateData,function(err,str){
+      if(!err && str){
+        // Add the universal header and footer
+        helpers.addUniversalTemplates(str,templateData,function(err,str){
+          if(!err && str){
+            // Return that page as HTML
+            callback(200,str,'html');
+          } else {
+            callback(500,undefined,'html');
+          }
+        });
+      } else {
+        callback(500,undefined,'html');
+      }
+    });
+  } else {
+    callback(405,undefined,'html');
+  }
+};
+
+handlers.cartList = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method == 'get'){
+    // Prepare data for interpolation
+    var templateData = {
+      'head.title' : 'Cart',
+      'body.class' : 'cartList'
+    };    
+    // Read in a template as a string
+    helpers.getTemplate('cartList',templateData,function(err,str){
       if(!err && str){
         // Add the universal header and footer
         helpers.addUniversalTemplates(str,templateData,function(err,str){
@@ -249,7 +277,7 @@ handlers.index = function(data,callback) {
 			if (!err && str) {
 				// add the universal header and footer
 				helpers.addUniversalTemplates(str, templateData, function(err,str){
-					debugger;
+					//debugger;
 					if (!err && str) {
 						callback(200,str,'html');
 					} else {

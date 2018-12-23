@@ -445,7 +445,7 @@ function changePage(page)
     for (var r=1 ; r<rows; r++) { // exclude table header therefore starting from 1
             if (idx < objJson.length) {
                 var item = objJson[idx] // point to current data record
-                var alink = '<a href="/menu/item/?menuIndex='+item.menuIndex+'">Add to Cart</a>'
+                var alink = '<a href="/menu/item/?menuIndex='+item.menuIndex+'">Select</a>'
                 menuTable.rows[r].cells[0].innerHTML=item.crust +'crust';
                 menuTable.rows[r].cells[1].innerHTML=item.size
                 menuTable.rows[r].cells[2].innerHTML=item.description
@@ -482,6 +482,16 @@ page.tableInit = function() {
     //debugger;
     createTable(records_per_page,cols_per_record);
     changePage(1);
+};
+
+page.amount = function() {
+    var qty = document.getElementById("qty");
+    var rate = document.getElementById('rate');
+    debugger;
+    var amount = Number(qty.value) * Number(rate.innerText);
+    amount = amount.toFixed(2)
+    var amt = document.getElementById("amt");
+    amt.innerHTML = amount
 };
 
 
