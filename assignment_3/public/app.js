@@ -222,6 +222,7 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
     });
   }
   // If login was successful, set the token in localstorage and redirect the user
+
   if(formId == 'sessionCreate'){
     app.setSessionToken(responsePayload);
     // TODO - change the location to appropriate path
@@ -230,7 +231,7 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
 
 
   // If forms saved successfully and they have success messages, show them
-  var formsWithSuccessMessages = ['accountEdit1', 'accountEdit2','checksEdit1'];
+  var formsWithSuccessMessages = ['accountEdit1', 'accountEdit2'];
   if(formsWithSuccessMessages.indexOf(formId) > -1){
     document.querySelector("#"+formId+" .formSuccess").style.display = 'block';
   }
@@ -246,10 +247,6 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
       window.location = '/cart/list'
   }
 
-  // If the user just deleted a check, redirect them to the dashboard
-  if(formId == 'checksEdit2'){
-    window.location = '/checks/all';
-  }
 
 };
 
@@ -292,6 +289,7 @@ app.logUserOut = function(redirectUser){
 };
 // Set the session token in the app.config object as well as localstorage
 app.setSessionToken = function(token){
+  // LOGIN
   app.config.sessionToken = token;
   var tokenString = JSON.stringify(token);
   localStorage.setItem('token',tokenString);
@@ -304,6 +302,7 @@ app.setSessionToken = function(token){
 // cart is json {'amount': 999, 'items':999}
 app.setCartData = function(cart){
   app.config.cartData = cart;
+  app.config.sessionToken.cartExists = true;
   var cartString = JSON.stringify(cart);
   localStorage.setItem('cart',cartString);
 };
@@ -350,31 +349,34 @@ app.getSessionToken = function(){
 
 // Load data on the page
 app.loadDataOnPage = function(){
-  // Get the current page from the body class
-  var bodyClasses = document.querySelector("body").classList;
-  var primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
+    // Get the current page from the body class
+    var bodyClasses = document.querySelector("body").classList;
+    var primaryClass = typeof(bodyClasses[0]) == 'string' ? bodyClasses[0] : false;
+    var fullName = typeof(app.config.sessionToken.fullName) == 'string' && app.config.sessionToken.fullName.length > 0 
+                    ? app.config.sessionToken.fullName : false;
 
-  // Logic for account settings page
-  if(primaryClass == 'accountEdit'){
-    app.loadAccountEditPage();
-  }
+    var name = document.getElementById('titleName');
+    // update fullname in document.
+    name.innerHTML =  (fullName) ? fullName : "";
+    
+    // Logic for account settings page
+    if(primaryClass == 'accountEdit'){
+      app.loadAccountEditPage();
+    }
 
-  // Logic for dashboard page
-  if(primaryClass == 'menuList'){
-    page.tableInit();
-  }
+    // Logic for dashboard page
+    if(primaryClass == 'menuList'){
+      page.tableInit();
+    }
 
-if(primaryClass == 'menuItem'){
-    app.loadMenuItem();
-  }
+    if(primaryClass == 'menuItem'){
+        app.loadMenuItem();
+    }
 
-if(primaryClass == 'cartList') {
-  app.loadCartList()
-}
-  // Logic for check details page
-  if(primaryClass == 'checksEdit'){
-    app.loadChecksEditPage();
-  }
+    if(primaryClass == 'cartList' && app.config.sessionToken.cartExists) {
+      app.loadCartList()
+    }
+    
 };
 
 // Load the account edit page specifically
@@ -445,7 +447,7 @@ app.loadCartList = function(responseData) {
             var rate = 0;
             var qty = 0;
             var cartTable = document.getElementById('cartList');
-            //
+            // iterate for items+1 times - the +1 is for the total line.
             for (var i = 0;i<items+1;i++) {
             
               var row = cartTable.insertRow(-1);
@@ -611,7 +613,7 @@ app.init = function(){
 
 };
 
-// Call the init processes after the window loads
+// Call the init processes after the window loads 
 window.onload = function(){
   app.init();
 };

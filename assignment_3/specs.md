@@ -25,6 +25,9 @@ TOKEN
  
 CART
 1. Fill up a shopping cart
+2. Show Shopping cart
+3. on - login - check if shopping cart exists for this user, if yes, update name,items in cart and totals
+4. on - login - if order exists and not paid for then show order
 
 4. Place an order (with fake credit card credentials), and receive an email receipt
 

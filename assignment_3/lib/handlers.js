@@ -1675,10 +1675,13 @@ handlers._tokens.post = function(data, callback){
 					// set expiration to 1 hour in the future
 					var tokenid = helpers.createRandomString(20);
 					var expires = Date.now() + 1000 * 60 * 60 // 1 hour
+					var cartExists = typeof(userData.userCartId) == 'string' ? true : false
 					var tokenObject = {
 						'phone': phone,
 						'tokenid' : tokenid,
-						'expires' : expires
+						'expires' : expires,
+						'fullName': userData.fullName,
+						'cartExists': cartExists
 					};
 					_data.create('tokens',tokenid,tokenObject, function(err){
 						if (!err) {

@@ -17,7 +17,7 @@
 
     <!-- FONT -->
     <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Static Assets -->
     <link type="image/x-icon" rel="icon" href="favicon.ico">
@@ -60,15 +60,14 @@
             <a href="/orders">My Orders</a>
           </li>
           <li class="loggedIn">
-            <a href="/account/edit">Account Settings</a>
+            <a href="/cart/list"><i class="fa fa-shopping-cart" style="color:red"></i> Cart</a>
           </li>
           <li class="loggedIn">
             <a href="#" id="logoutButton">Logout</a>
           </li>
           <li class="loggedIn">
-            <a href="/cart" id="logoutButton">
-              <div id="shoppingCartAmount" style="font-weight:900;">{shoppingcart.amount}</div>
-              <img style="" src="public/shopping_cart.png" alt="Shopping Cart">
+            <a href="/account/edit" id="logoutButton">
+              <div id="titleName" style="font-weight:900;color:red"></div>
             </a>
           </li>
         </ul>
