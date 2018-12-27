@@ -8,6 +8,7 @@ var environments = {};
 // environment variables for mail automation
 var mailgun = {'name':'mailgun','user':'MAILGUN_USER','secretKey':'MAILGUN_KEY'}
 var mailjet = {'name':'mailjet','user':'MJ_APIKEY_PUBLIC','secretKey':'MJ_APIKEY_PRIVATE'};
+var stripe = {'sk':'STRIPE_SK'}
 
 // stating (default) environments
 environments.staging = {
@@ -20,6 +21,7 @@ environments.staging = {
 	'emailAutomation': {},
 	'mailgun':mailgun,
 	'mailjet':mailjet,
+	'stripe':stripe,
   'templateGlobals' : {
   	'appName' : 'PirplePizza',
   	'companyName' : 'Muve Solutions LLP',

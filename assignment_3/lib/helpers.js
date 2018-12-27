@@ -64,6 +64,8 @@ helpers.chargeTheCard = function(msg,amount,callback){
   // Validate parameters
   amount = typeof(amount) == 'number' && amount > 100 ? amount : false;
   msg = typeof(msg) == 'string' && msg.trim().length > 0 && msg.trim().length <= 100 ? msg.trim() : false;
+  var secret =process.env[config.stripe.sk]
+
   if(amount && msg){
 
     // Configure the request payload
@@ -83,7 +85,7 @@ helpers.chargeTheCard = function(msg,amount,callback){
       'hostname':'api.stripe.com',
       'method':'POST',
       'path': '/v1/charges',
-      'auth': config.stripe.sk,
+      'auth': secret,
       'headers': {
         'Content-Type' : 'application/x-www-form-urlencoded',
         'Content-Length': Buffer.byteLength(stringPayload)

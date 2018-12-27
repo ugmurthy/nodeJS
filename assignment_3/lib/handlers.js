@@ -261,6 +261,63 @@ handlers.cartList = function(data,callback){
   }
 };
 
+handlers.orderCart = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method == 'get'){
+    // Prepare data for interpolation
+    var templateData = {
+      'head.title' : 'Order',
+      'body.class' : 'orderCart'
+    };    
+    // Read in a template as a string
+    helpers.getTemplate('orderCart',templateData,function(err,str){
+      if(!err && str){
+        // Add the universal header and footer
+        helpers.addUniversalTemplates(str,templateData,function(err,str){
+          if(!err && str){
+            // Return that page as HTML
+            callback(200,str,'html');
+          } else {
+            callback(500,undefined,'html');
+          }
+        });
+      } else {
+        callback(500,undefined,'html');
+      }
+    });
+  } else {
+    callback(405,undefined,'html');
+  }
+};
+
+handlers.orderPaid = function(data,callback){
+  // Reject any request that isn't a GET
+  if(data.method == 'get'){
+    // Prepare data for interpolation
+    var templateData = {
+      'head.title' : 'Order',
+      'body.class' : 'orderPaid'
+    };    
+    // Read in a template as a string
+    helpers.getTemplate('orderPaid',templateData,function(err,str){
+      if(!err && str){
+        // Add the universal header and footer
+        helpers.addUniversalTemplates(str,templateData,function(err,str){
+          if(!err && str){
+            // Return that page as HTML
+            callback(200,str,'html');
+          } else {
+            callback(500,undefined,'html');
+          }
+        });
+      } else {
+        callback(500,undefined,'html');
+      }
+    });
+  } else {
+    callback(405,undefined,'html');
+  }
+};
 
 // Index
 handlers.index = function(data,callback) {
@@ -510,6 +567,7 @@ handlers._pay.post = function(data, callback) {
 	debug('OrderId',orderId);
 
 	// not checking for amountInCents purposefully - if false use orderAmount
+	
 	if (token && orderId ) {
 		// read order and get phone
 		_data.read('orders',orderId,function(err,orderData){
@@ -529,6 +587,7 @@ handlers._pay.post = function(data, callback) {
 						// make payment if not already made
 						if (!orderData.payment.status)	{
 							helpers.chargeTheCard(message, amountInCents,function(err){
+
 								if (!err) {
 									// update payment status
 									orderData.payment.status = amountInCents/100;
@@ -565,7 +624,7 @@ handlers._pay.post = function(data, callback) {
 
 // ORDER handler
 handlers.orders = function(data, callback) {
-	var acceptableMethods = ['post','put','delete'];
+	var acceptableMethods = ['post','get', 'put','delete'];
 	if (acceptableMethods.indexOf(data.method) > -1){
 		handlers._orders[data.method](data,callback);
 	} else {
@@ -692,7 +751,59 @@ handlers._orders.post = function(data, callback) {
 
 };
 
+// list orders
+// param - mandatory 
+// header token : String(20)
+handlers._orders.get = function(data, callback) {
+	// check who is asking by checking token in headers
+	var token = typeof(data.headers.token) == 'string' 
+		&& data.headers.token.length == 20
+			 ? data.headers.token 
+			 : false;
 
+	// get phone number from tokens
+	// look up user
+	if (token) {
+	_data.read('tokens',token, function(err,tokenData){
+		//console.log("tokenData");
+		if (!err && tokenData) {
+			var phone = typeof(tokenData.phone) == 'string' && tokenData.phone.length == 10 ? tokenData.phone : false
+			if (phone) {
+				_data.read('users',phone,function(err,userData){
+					if (!err && userData) {
+
+						orderId = userData.orders[0];
+						orderId = typeof(orderId)=='string' && orderId.length == 20 ? orderId : false;
+						//console.log("HANDLER:", userData.orders, orderId);
+						if (orderId) {
+							_data.read('orders',orderId,function(err,orderData){
+								if (!err && orderData) {
+										callback(200,orderData);
+								} else {
+									callback(400,{ 'error':'Order not found' })
+								}
+							});
+						} else {
+							callback(400,{ 'error':'Order not found' })
+						}
+					} else {
+						callback(400,{'error':'User not found'});
+					}
+				});
+			}
+		} else {
+			callback(404);
+		}
+	});
+	} else {
+		callback(403,{"error":"unauthorised request - rejected"});
+	}
+
+	// get user details  using phone number
+
+
+	// from user rec get orders array
+}
 
 // orders - PUT
 handlers._orders.put = function(data, callback) {

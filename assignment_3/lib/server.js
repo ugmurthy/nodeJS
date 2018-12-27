@@ -165,6 +165,8 @@ server.router = {
   'session/deleted': handlers.sessionDeleted,
   'menu/list':handlers.menuList,
   'menu/item':handlers.menuItem,
+  'order/cart':handlers.orderCart,
+  'order/paid':handlers.orderPaid,
   'cart/list':handlers.cartList,
   'api/users' : handlers.users,
   'api/tokens' : handlers.tokens,

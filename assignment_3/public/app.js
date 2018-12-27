@@ -159,7 +159,8 @@ app.bindForms = function(){
         var queryStringObject = method == 'DELETE' ? payload : {};
 
         // Call the API
-        //console.log(path,method,payload);
+        console.log(path,method,payload);
+        debugger;
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
           // Display an error on the form if needed
           if(statusCode !== 200){
@@ -245,6 +246,10 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   // If the user just to cart successfully, show cart, with button to menu
   if(formId == 'addToCart'){
       window.location = '/cart/list'
+  }
+
+  if(formId == 'makePayment') {
+    window.location = '/order/paid';
   }
 
 
@@ -376,7 +381,11 @@ app.loadDataOnPage = function(){
     if(primaryClass == 'cartList' && app.config.sessionToken.cartExists) {
       app.loadCartList()
     }
-    
+
+    if(primaryClass == 'orderCart' ) {
+      app.loadOrder()
+    }
+   
 };
 
 // Load the account edit page specifically
@@ -440,7 +449,6 @@ app.loadCartList = function(responseData) {
             // populate the table with cart items
             // and get totals to update local storage
             var lineItems = responsePayload.lineItems;
-            debugger;
             var items = responsePayload.lineItems.length;
             var totAmt = 0;
             var lineAmt = 0;
@@ -489,6 +497,105 @@ app.loadCartList = function(responseData) {
   // use document.queryselec to seek element of interest and then update values for each item/field in a loop
 
 };
+
+// show order
+app.loadOrder = function(responseData) {
+  var phone = typeof(app.config.sessionToken.phone) == 'string' 
+      ? app.config.sessionToken.phone 
+      : false;
+  debugger;
+
+  if (phone) {
+      // setup quertstringobject to point to user
+      var queryStringObject = {'phone': phone};
+
+      
+      // call the api with phone/token to get all cart items
+       app.client.request(undefined,'api/orders/','GET',undefined,undefined,function(statusCode,responsePayload) {
+          if (statusCode == 200) {
+            /*
+            ========================================================
+            {"orderId":"ORD:rl335sw0fr62mw1s",
+              "cart":{"cartId":"er8xpit5qsl2y04mq8x9",
+                  "phone":"9999999993",
+                  "lineItems":
+                    [   {"menuIndex":"0","name":"Pizza elit ea","price":144.91,"quantity":"20"},
+                      {"menuIndex":"17","name":"Pizza elit ad","price":178.75,"quantity":"4"},
+                      {"menuIndex":"13","name":"Pizza non officia","price":137.49,"quantity":"4"},
+                      {"menuIndex":"10","name":"Pizza laboris ut","price":146.68,"quantity":"6"}
+                    ]
+                  },
+              "orderAmount":5043.24,
+              "orderQuantity":34,
+              "payment":{"method":"Visa Express","status":false},
+              "delivery":{"status":false,"by":"ToBeDecided","etd":1545656930293}
+            }
+            ========================================================
+            */
+            // populate the table with cart items
+            // and get totals to update local storage
+
+            var lineItems = responsePayload.cart.lineItems;
+            var items = responsePayload.cart.lineItems.length;
+            var totAmt = 0;
+            var lineAmt = 0;
+            var rate = 0;
+            var qty = 0;
+            var ordNo = document.getElementById('ordNo');
+            ordNo.innerHTML = responsePayload.orderId;
+            var hiddenOrderId = document.getElementById('hiddenOrderId')
+            hiddenOrderId.value = responsePayload.orderId;
+
+            var cartTable = document.getElementById('orderCartTable');
+            // iterate for items+1 times - the +1 is for the total line.
+            for (var i = 0;i<items+1;i++) {
+            
+              var row = cartTable.insertRow(-1);
+              var nameCell = row.insertCell(0);
+              var rateCell = row.insertCell(1);
+              var qtyCell = row.insertCell(2);
+              var amtCell = row.insertCell(3);
+
+              if (i<items) {
+                rate = Number(lineItems[i].price);
+                qty = Number(lineItems[i].quantity);
+                lineAmt = rate*qty;
+                totAmt += lineAmt;
+                qtyCell.innerHTML = qty;
+                nameCell.innerHTML = lineItems[i].name;
+                rateCell.innerHTML = rate;
+                amtCell.innerHTML =lineAmt.toFixed(2)
+              } else { // total line
+                qtyCell.innerHTML = '<BOLD>TOTAL</BOLD>';
+                nameCell.innerHTML = '';
+                rateCell.innerHTML =  '';
+                amtCell.innerHTML =totAmt.toFixed(2)
+              }
+            }
+            var payBtn = document.getElementById('payBtn');
+            if (responsePayload.payment.status) { // if we paid for this disable pay btn
+              payBtn.href = '/menu/list';
+            } else {
+              payBtn.href = 'javascript:app.makePayment()';
+            }
+            //
+            var cart = false; // cart no longer exists
+            setCartData(cart)
+
+          } else {
+            // error
+            console.log("Cannot find ORDER for this user :",phone);
+          }
+       });
+  } else {
+    console.log("Invalid request - user not logged in");
+  } 
+
+  // use document.queryselec to seek element of interest and then update values for each item/field in a loop
+
+};
+
+
 app.loadMenuItem = function() {
   // check variable name for id
   var menuIndex = typeof(window.location.href.split('=')[1]) == 'string' && window.location.href.split('=')[1].length > 0 
@@ -537,9 +644,11 @@ app.loadMenuItem = function() {
   }
 };
 
-app.placeOrder = function() {
-  console.log("Placing order");
+app.makePayment = function() {
+  console.log("Making Payment....");
 };
+
+
 
 // Loop to renew token often
 app.tokenRenewalLoop = function(){
