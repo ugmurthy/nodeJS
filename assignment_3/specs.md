@@ -32,5 +32,5 @@ CART
 
 4. Place an order 
 5. Make the payment
-6.
+6. send email
 
