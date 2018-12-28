@@ -16,7 +16,7 @@ app.client = {}
 
 // Interface for making API calls
 app.client.request = function(headers,path,method,queryStringObject,payload,callback){
-  //debugger;
+  //
   // Set defaults
   // default to {}
   headers = typeof(headers) == 'object' && headers !== null ? headers : {};
@@ -160,7 +160,7 @@ app.bindForms = function(){
 
         // Call the API
         console.log(path,method,payload);
-        debugger;
+        
         app.client.request(undefined,path,method,queryStringObject,payload,function(statusCode,responsePayload){
           // Display an error on the form if needed
           if(statusCode !== 200){
@@ -172,7 +172,7 @@ app.bindForms = function(){
             } else {
 
               // Try to get the error from the api, or set a default error message
-              //debugger;
+              //
               var error = typeof(responsePayload.error) == 'string' ? responsePayload.error : 'An error has occured, please try again';
 
               // Set the formError field with the error text
@@ -197,6 +197,7 @@ app.bindForms = function(){
 app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   var functionToCall = false;
   // If account creation was successful, try to immediately log the user in
+  
   if(formId == 'accountCreate'){
     // Take the phone and password, and use it to log the user in
     var newPayload = {
@@ -249,8 +250,20 @@ app.formResponseProcessor = function(formId,requestPayload,responsePayload){
   }
 
   if(formId == 'makePayment') {
-    window.location = '/order/paid';
-  }
+        
+        var newPayload = {'orderId':requestPayload.orderId}
+        
+        app.client.request(undefined,'api/sendmail','POST',undefined,newPayload,function(newStatusCode,newResponsePayload){
+          if (newStatusCode == 200) {
+            console.log("Email sent");
+          } else {
+            console.log("Could not sent email");
+          }
+          window.location = '/order/paid';
+        });
+        
+  } 
+  
 
 
 };
@@ -378,9 +391,15 @@ app.loadDataOnPage = function(){
         app.loadMenuItem();
     }
 
-    if(primaryClass == 'cartList' && app.config.sessionToken.cartExists) {
+    if(primaryClass == 'cartList' ) {
       app.loadCartList()
     }
+
+    if(primaryClass == 'orderCreate' ) {
+      app.createOrder();
+      //app.loadOrder();
+    }
+
 
     if(primaryClass == 'orderCart' ) {
       app.loadOrder()
@@ -397,7 +416,7 @@ app.loadAccountEditPage = function(){
     var queryStringObject = {
       'phone' : phone
     };
-    //debugger;
+    
     app.client.request(undefined,'api/users','GET',queryStringObject,undefined,function(statusCode,responsePayload){
       if(statusCode == 200){
         // Put the data into the forms as values where needed
@@ -498,12 +517,23 @@ app.loadCartList = function(responseData) {
 
 };
 
+//create order
+
+app.createOrder = function(responseData) {
+  debugger;
+  app.client.request(undefined,'api/orders','POST',undefined,undefined,function(statusCode,responsePayload) {
+    if (statusCode != 200) {
+      console.log("Cannot create order")
+    }
+  });
+};
+
 // show order
 app.loadOrder = function(responseData) {
   var phone = typeof(app.config.sessionToken.phone) == 'string' 
       ? app.config.sessionToken.phone 
       : false;
-  debugger;
+  
 
   if (phone) {
       // setup quertstringobject to point to user
@@ -572,13 +602,7 @@ app.loadOrder = function(responseData) {
                 amtCell.innerHTML =totAmt.toFixed(2)
               }
             }
-            var payBtn = document.getElementById('payBtn');
-            if (responsePayload.payment.status) { // if we paid for this disable pay btn
-              payBtn.href = '/menu/list';
-            } else {
-              payBtn.href = 'javascript:app.makePayment()';
-            }
-            //
+            
             var cart = false; // cart no longer exists
             setCartData(cart)
 
@@ -644,9 +668,6 @@ app.loadMenuItem = function() {
   }
 };
 
-app.makePayment = function() {
-  console.log("Making Payment....");
-};
 
 
 

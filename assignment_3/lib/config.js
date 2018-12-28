@@ -40,6 +40,7 @@ environments.production = {
 	'emailAutomation':{},
 	'mailgun':mailgun,
 	'mailjet':mailjet,
+	'stripe':stripe,
   'templateGlobals' : {
   	'appName' : 'PirplePizza',
   	'companyName' : 'Muve Solutions LLP',
