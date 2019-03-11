@@ -83,25 +83,6 @@ cli.responders.listUsers = function(){
 	});
 };
 
-cli.lessThan24Hours = function(userId) {
-	var age = false;
-	_data.stats('users',userId, function(err,stats){
-		if (!err && stats) {
-			// check if age is less than 24 hours
-			var ageInHours = (Date.now() - stats.birthtimeMs)/1000/60/60;
-			console.log(Date.now(),stats.birthtimeMs)
-			console.log(ageInHours)
-			if (ageInHours < 24.0) {
-				age = true;
-			} else {
-				age = false;
-			}	
-		} else {
-			age = false;
-		}
-	});
-	return age;
-}
 
 cli.responders.moreUserInfo = function(str) {
 	// Get the id from the string str
@@ -146,6 +127,96 @@ cli.responders.moreUserInfo = function(str) {
 		}
 	});
 
+};
+
+// LIST ORDERS
+cli.responders.listOrders = function(){
+	_data.list('orders', function(err,orderIds){
+		if (!err && orderIds && orderIds.length>0) {
+			cli.verticalSpace()
+			orderIds.forEach(function(orderId){
+				_data.read('orders',orderId, function(err,orderData){
+					if (!err && orderData) {
+						var Status='';
+						if (orderData.payment.status) {
+							Status = Status+"PAID"
+						}
+						else {
+							Status = Status+"NOT PAID"
+						}
+						if (orderData.delivery.status) {
+							Status = Status + ",DELIVERED"
+						} else {
+							Status = Status + ",NOT DELIVERED"
+							
+						}
+						var line = orderData.orderId +" "+orderData.orderQuantity+"\t"+orderData.orderAmount+'\t'+Status	
+						console.log(line);
+						//cli.verticalSpace(1);
+					}
+				});
+			
+			});
+		}
+	});
+};
+
+cli.responders.moreOrderInfo = function(str) {
+	// Get the id from the string str
+	var arr = str.split('--');
+	var orderNo = typeof(arr[1]) == 'string' && arr[1].trim().length > 0 ? arr[1].trim() : false;
+
+	if (orderNo) {
+		_data.read('orders',orderNo, function(err,orderData) {
+			if (!err && orderData) {
+				// we have the order
+				var lineItems = orderData.cart.lineItems;
+				
+				// check if order is recent i.e. age < 24.0 hours
+				_data.stats('orders',orderNo, function(err,stats){
+					if (!err && stats) {
+						// we have order age in millisecs
+						cli.verticalSpace(1);
+						var ageInHours = (Date.now() - stats.birthtimeMs)/1000/60/60;
+						if (ageInHours < 24.0) {
+							lineItems.forEach(function(item){
+								console.log(item);
+								cli.verticalSpace(1);
+							});
+						} else {
+							console.log("old orders")
+						}
+					}
+				});
+
+			} else {
+				// could not find order
+				console.log("Error: Order not found");
+			}
+		});		
+	}
+
+};
+
+cli.responders.listMenu = function(){
+	_data.list('menu', function(err,menuItems){
+		if (!err && menuItems && menuItems.length>0) {
+			cli.verticalSpace()
+			menuItems.forEach(function(menuItem){
+				_data.read('menu',menuItem, function(err,menuData){
+					if (!err && menuData) {
+						var m = menuData;
+						var lineArray = [m.size,m.crust,'crust',m.category,m.name,'\t\t\tPrice :',m.price]
+
+						var line = lineArray.join(" ");
+						console.log(line);
+						cli.verticalSpace(1);
+					}
+				});
+			
+			});
+		}
+	});
 };
 
 
