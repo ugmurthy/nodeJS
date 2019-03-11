@@ -1,0 +1,29 @@
+<h1>Order: <span id=ordNo style="color:red"></span></h1>
+<h2>The Best Pizzas in town</h2>
+<hr />
+
+<table id="orderCartTable">
+  <tr>
+    <th>Name</th>
+    <th>Rate</th>
+    <th>Quantity</th>
+    <th>Amount</th>
+  </tr>
+</table>
+<br>
+<hr>
+<div class=formwrapper>
+	 <form id="makePayment" action="/api/pay" method="POST">
+	 	<div class="formError"></div>
+    	<div class="formSuccess">Your Changes Have Been Saved</div>
+
+	 	<input id="hiddenOrderId"  type="hidden" name="orderId" />
+	 	<div class="inputWrapper ctaWrapper">
+      		<button type="submit" class="cta blue">Make Payment</button>
+    	</div>
+		<div class="inputwrapper" align="center">
+			<a class="backButton" href="menu/list" >back</a>
+		</div>
+	</form>
+</div>
+
