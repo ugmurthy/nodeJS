@@ -71,11 +71,8 @@ cli.responders.listUsers = function(){
 			userIds.forEach(function(userId){
 				_data.read('users',userId, function(err,userData){
 					if (!err && userData) {
-						var line = 	'Name: '+userData.firstName+' '+userData.lastName+' '+
-									'Phone: '+userData.phone+' Checks: '
-						var chks = userData.checks;
-						var numberOfChecks = typeof(chks) == 'object' && chks instanceof Array && chks.length > 0 ? chks.length : 0;
-						line = line + numberOfChecks;
+						var line = 	'Name: '+userData.fullName+' <'+userData.email+'>\t'+
+									'Phone: '+userData.phone
 						console.log(line);
 						cli.verticalSpace(1);
 					}
@@ -86,6 +83,70 @@ cli.responders.listUsers = function(){
 	});
 };
 
+cli.lessThan24Hours = function(userId) {
+	var age = false;
+	_data.stats('users',userId, function(err,stats){
+		if (!err && stats) {
+			// check if age is less than 24 hours
+			var ageInHours = (Date.now() - stats.birthtimeMs)/1000/60/60;
+			console.log(Date.now(),stats.birthtimeMs)
+			console.log(ageInHours)
+			if (ageInHours < 24.0) {
+				age = true;
+			} else {
+				age = false;
+			}	
+		} else {
+			age = false;
+		}
+	});
+	return age;
+}
+
+cli.responders.moreUserInfo = function(str) {
+	// Get the id from the string str
+	var arr = str.split('--');
+	var userEmail = typeof(arr[1]) == 'string' && arr[1].trim().length > 0 ? arr[1].trim() : false;
+	
+	_data.list('users', function(err,userIds){
+		if (!err && userIds && userIds.length>0) {
+			cli.verticalSpace()
+			userIds.forEach(function(userId){
+				_data.read('users',userId, function(err,userData){
+					if (!err && userData) {
+						if (userData.email == userEmail) {
+							// we have the required user
+							// check age
+
+							_data.stats('users',userId, function(err,stats){
+								if (!err && stats) {
+									// we have stats
+									var ageInHours = (Date.now() - stats.birthtimeMs)/1000/60/60;
+									if (ageInHours < 24.0) {
+										var line = 	'Name :\t\t'+userData.fullName+' <'+userData.email+'>\n'+
+												'Phone :\t\t'+userData.phone + '\n' +
+												'Address :\t'+userData.streetAddress +'\n'+
+												'Total orders :\t'+userData.orders.length
+										console.log(line);
+									} else {
+										console.log("old users")
+									}
+								} else {
+									// no stats
+									console.log("Error: No file stats available for : ", userId);
+								}
+							});
+							
+						}
+						
+					}
+				});
+			
+			});
+		}
+	});
+
+};
 
 
 // HELP / man

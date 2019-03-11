@@ -46,6 +46,18 @@ lib.create = function(dir, file, data, callback) {
 
 };
 
+// get file stats
+lib.stats = function(dir, file, callback) {
+	filename = lib.baseDir+'/'+dir+'/'+file+'.json';
+	fs.stat(filename, function(err,data){
+		if (!err && data) {
+			callback(false,data);
+		} else {
+			callback(err,data);
+		}
+	});
+};
+
 // read data from a file
 lib.read = function(dir, file, callback) {
 	filename = lib.baseDir+'/'+dir+'/'+file+'.json';
