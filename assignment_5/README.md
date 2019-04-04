@@ -12,4 +12,5 @@ to run the tests on terminal:
 
 <code>node test</code>
 
+Screen Cast avaialbe at : https://youtu.be/iegB7HlW3n0
 
